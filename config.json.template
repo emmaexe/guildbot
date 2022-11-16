@@ -1,0 +1,128 @@
+{
+    "discordGuildId": "DISCORDID",
+    "hypixelGuildId":"UUID",
+    "colours": {
+        "main":"00FFF0",
+        "secondary":"202225",
+        "success":"00FF50",
+        "warning":"FFFF10",
+        "error":"FF1F00"
+    },
+    "roles":{
+        "guildMemberRole":"DISCORDID",
+        "helpers":["DISCORDID", "DISCORDID", ...],
+        "adminRole":["DISCORDID", "DISCORDID", ...]
+    },
+    "scheduledEvents": {
+        "leaderboardDataUpdate":"*/1 * * * *"
+    },
+    "channels":{
+        "logChannelId":"DISCORDID",
+        "appChannelId":"DISCORDID",
+        "queueChannelId":"DISCORDID",
+        "ticketCategoryId":"DISCORDID",
+        "starboardChannelId":"DISCORDID",
+        "memberCount": {
+            "discord":"DISCORDID",
+            "guild":"DISCORDID"
+        }
+    },
+    "emoji": {
+        "warning": "<:warning_emoji:868054485992357948>",
+        "error":"<:error_emoji:868054485946224680>",
+        "star":"<:GoldStar:905915895937892403>",
+        "log":"<:log_emoji:868054485933625346>",
+        "helpEmoji":"<:KannaSip:889543061821063189>",
+        "helpCommands":"<:slash:913172347639435285>",
+        "helpButtons":"<:button:913172562001928193>",
+        "helpMenus":"<:dropdown_select:914106174754947113>",
+        "github":"<:github:888155742719328276>",
+        "discord":"<:DiscordLogoWhite:888158984475918368>",
+        "plus":"<:plus:888072519582634075>",
+        "minus":"<:minus:888072653003452516>",
+        "applyCommandMembership":"<:idcard:950739003265654834>",
+        "applyCommandStaff":"👮",
+        "yes":"<:yesx:865887075509338122>",
+        "no":"<:nox:865887075491643402>",
+        "arrowLeft":"◀️",
+        "arrowRight":"▶️"
+    },
+    "selectMenus": [
+        {
+            "name":"UNIQUE_STRING",
+            "description":"STRING",
+            "placeholder":"STRING",
+            "disabled":BOOLEAN,
+            "maxValues":INTEGER,
+            "minValues":INTEGER,
+            "options":[
+                {"value": "UNIQUE_STRING-example_name_1", "label": "STRING", "description": "STRING", "emoji": "EMOJI"},
+                {"value": "UNIQUE_STRING-example_name_2", "label": "STRING", "description": "STRING", "emoji": "EMOJI"},
+                {"value": "UNIQUE_STRING-example_name_3", "label": "STRING", "description": "STRING", "emoji": "EMOJI"},
+                ...
+            ],
+            "actions": {
+                "UNIQUE_STRING-example_name_1":{ "actionType":"toggleRole", "roleID":"DISCORDID" },
+                "UNIQUE_STRING-example_name_2":{ "actionType":"removeRole", "roleID":"DISCORDID" },
+                "UNIQUE_STRING-example_name_3":{ "actionType":"addRole", "roleID":"DISCORDID" },
+                ...
+            }
+        },
+        ...
+    ],
+    "modals":{
+        "guildLeaveFeedback":{
+            "enabled": BOOLEAN,
+            "shortQuestion":{
+                "enabled":BOOLEAN,
+                "text":STRING,
+                "placeholder":STRING,
+                "minLength":INTEGER,
+                "maxLength":INTEGER
+            },
+            "longQuestion":{
+                "enabled":BOOLEAN,
+                "text":STRING,
+                "placeholder":STRING,
+                "minLength":INTEGER,
+                "maxLength":INTEGER
+            }
+        }
+    },
+    "chatbridge":{
+        "enabled":BOOLEAN,
+        "channelId": "DISCORDID",
+        "webhook": "URL",
+        "messagelogging": {
+            "enabled":BOOLEAN,
+            "channelId": "DISCORDID"
+        },
+        "relogOnKick": {
+            "enabled": BOOLEAN,
+            "relogAmount": INTEGER
+        },
+        "serverJoinLeaveMessages": {
+            "enabled": BOOLEAN
+        },
+        "guildJoinLeaveMessages": {
+            "enabled": BOOLEAN,
+            "logging": BOOLEAN
+        },
+        "autoInviteOnApp": BOOLEAN
+    },
+    "url":{
+        "guild_staff_application":"URL",
+        "forums_post":"URL"
+    },
+    "guildAppReqs":{
+        "textReqs": [
+            STRING,
+            STRING,
+            ...
+        ],
+        "minNetworkLevel": INTEGER
+    },
+    "starboard":{
+        "minimumCount": INTEGER
+    }
+}
