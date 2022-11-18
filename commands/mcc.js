@@ -47,22 +47,21 @@ module.exports = {
                 )
         ),
     async execute(client, interaction) {
-        await interaction.deferReply()
         let mclient = await server.mclient;
-        if (!config.chatbridge.enabled) return interaction.editReply({content:"**The chatbridge feature of this bot must be enabled in the configuration file before this command can be used.**", ephemeral: true})
+        if (!config.chatbridge.enabled) return interaction.reply({content:"**The chatbridge feature of this bot must be enabled in the configuration file before this command can be used.**", ephemeral: true})
         if (interaction.options.getSubcommand() == "ginvite") {
             let name = interaction.options.getString('name')
             mclient.chat(`/g invite ${name}`)
-            interaction.editReply({content: `Sent **${name}** an invite to the guild.`, ephemeral: true})
+            interaction.reply({content: `Sent **${name}** an invite to the guild.`, ephemeral: true})
         } else if (interaction.options.getSubcommand() == "gkick") {
             let name = interaction.options.getString('name')
             let reason = interaction.options.getString('reason')
             mclient.chat(`/g kick ${name} ${reason}`)
-            interaction.editReply({content: `Kicked **${name}** from the guild.`, ephemeral: true})
+            interaction.reply({content: `Kicked **${name}** from the guild.`, ephemeral: true})
         } else if (interaction.options.getSubcommand() == "rawcommand") {
             let command = interaction.options.getString('command')
             mclient.chat(`/${command}`)
-            interaction.editReply({content: `Sent \"**/${command}**\" to the server.`, ephemeral: true})
+            interaction.reply({content: `Sent \"**/${command}**\" to the server.`, ephemeral: true})
         }
     },
 };

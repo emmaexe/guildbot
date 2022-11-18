@@ -39,7 +39,6 @@ module.exports = {
             )
         ,
     async execute(client, interaction) {
-        await interaction.deferReply()
         if (interaction.options.getSubcommand() == 'menu') {
             let menuConfig = config.selectMenus.find(menu => menu.name === interaction.options.getString('object'));
             const menu = new Discord.MessageSelectMenu()
@@ -52,7 +51,7 @@ module.exports = {
             const row = new Discord.MessageActionRow()
                 .addComponents(menu)
             interaction.channel.send({content: "​", components: [row]}) //ZERO-WIDTH SPACE
-            interaction.editReply({content: "Object summoned successfully.", ephemeral: true})
+            interaction.reply({content: "Object summoned successfully.", ephemeral: true})
         } else if (interaction.options.getSubcommand() == 'kickwave') {
             //Calculate players who contributed the least in the last 7 days.
             await MongoClient.connect()
@@ -60,7 +59,7 @@ module.exports = {
             db.collection('hypixel-api-data').findOne({ sid: "guild-leaderboard-data" }, async function(err, res) {
                 if (err) throw err;
                 if (res == null) {
-                    interaction.editReply({content:"You can't do this now. Please try again later.", ephemeral: true})
+                    interaction.reply({content:"You can't do this now. Please try again later.", ephemeral: true})
                     MongoClient.close()
                 } else {
                     let lastUpdateTimestamp = res.timestamp;
@@ -88,7 +87,7 @@ module.exports = {
                         if (i+1<count) {content+=`"${userData[0]}",\n`} else {content+=`"${userData[0]}"\n]`}
                     }
                     content+="\n```"
-                    interaction.editReply({ephemeral: interaction.options.getBoolean('ephemeral'), embeds: [embed], content: content}).then(()=>{
+                    interaction.reply({ephemeral: interaction.options.getBoolean('ephemeral'), embeds: [embed], content: content}).then(()=>{
                         MongoClient.close()
                     })
                 }    

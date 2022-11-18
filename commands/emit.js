@@ -34,7 +34,6 @@ module.exports = {
             )
         ),
     async execute(client, interaction) {
-        await interaction.deferReply()
         if (interaction.options.getSubcommand() == 'force-apply') {
             let discordUser = interaction.options.getUser('target')
             await MongoClient.connect()
@@ -48,7 +47,7 @@ module.exports = {
                     inGameName = res.minecraft_name
                 }
                 if (inGameName == undefined) {
-                    return interaction.editReply({
+                    return interaction.reply({
                         content: "**There was an error while executing this command!**\n*You must enter a discord user with a valid linked minecraft account (see the **/link** command)*",
                         ephemeral: true
                     })
@@ -99,7 +98,7 @@ module.exports = {
                     if (helperPing!="") {
                         await interaction.channel.send(helperPing)
                     }
-                    await interaction.editReply({
+                    await interaction.reply({
                         content: "Success.",
                         ephemeral: true
                     })
@@ -109,7 +108,7 @@ module.exports = {
         } else if (interaction.options.getSubcommand() == 'message') {
             let text = interaction.options.getString('text').replaceAll('\\n', '\n')
             interaction.channel.send(text)
-            interaction.editReply({
+            interaction.reply({
                 content: "Success.",
                 ephemeral: true
             })

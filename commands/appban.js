@@ -73,7 +73,6 @@ module.exports = {
             )
         ,
     async execute(client, interaction) {
-        await interaction.deferReply()
         if (interaction.options.getSubcommand() == "add") {
             let ephemeralValue = interaction.options.getBoolean('silent')
             let timeNow = Math.round(Date.now()/1000)
@@ -82,7 +81,7 @@ module.exports = {
             let customtime = interaction.options.getInteger('customtime')
             let time; if (customtime == undefined) {time = parseInt(interaction.options.getString('time'))} else {time = 3600*customtime}
             if (isNaN(time)) {
-                interaction.editReply({content: "Please select/enter a valid ban length.", ephemeral: true})
+                interaction.reply({content: "Please select/enter a valid ban length.", ephemeral: true})
             } else {
                 let endtime = Math.round(timeNow+time);
                 await MongoClient.connect()
@@ -105,7 +104,7 @@ module.exports = {
                         .addField(`New punishment added:`, `**Target:** *<@${target.id}> (${target.tag})*\n**Target ID:** *${target.id}*\n**Punishment given by:** *<@${interaction.user.id}> (${interaction.user.tag}, ${interaction.user.id})*\n**Reason for punishment:** *${reason}*\n**Punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`)
                     let logchannel = await client.channels.fetch(config.channels.logChannelId)
                     logchannel.send({embeds: [logembed]})
-                    interaction.editReply({embeds: [embed], ephemeral: ephemeralValue})
+                    interaction.reply({embeds: [embed], ephemeral: ephemeralValue})
                 } else if (res.end_timestamp < endtime) {
                     let historyFetch = await db.collection('guild_application_bans_history').findOne({ discord_id: target.id })
                     let historyArray;
@@ -135,7 +134,7 @@ module.exports = {
                         .addField(`Old punishment removed:`, `**Target:** *<@${res.discord_id}> (${res.discord_tag})*\n**Target ID:** *${res.discord_id}*\n**Punishment given by:** *<@${res.admin.discord_id}> (${res.admin.discord_tag}, ${res.admin.discord_id})*\n**Reason for punishment:** *${res.reason}*\n**Punishment ends:** *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*`)
                     let logchannel = await client.channels.fetch(config.channels.logChannelId)
                     logchannel.send({embeds: [logembed]})
-                    interaction.editReply({embeds: [embed], ephemeral: ephemeralValue})
+                    interaction.reply({embeds: [embed], ephemeral: ephemeralValue})
                 } else {
                     await MongoClient.close()
                     let embed = new Discord.MessageEmbed()
@@ -143,7 +142,7 @@ module.exports = {
                         .setTimestamp()
                         .setTitle("Error. Could not add punishment.")
                         .setDescription(`**New punishment could not be added since it ends earlier than an existing punishment. To add the new punishment, adjust its length accordingly or remove the old one.**\n\n**Old punishment ends:** *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*\n**New punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`)
-                    interaction.editReply({embeds: [embed], ephemeral: true})
+                    interaction.reply({embeds: [embed], ephemeral: true})
                 }
             }
         } else if (interaction.options.getSubcommand() == "list") {
@@ -186,7 +185,7 @@ module.exports = {
                     }
                 }
             }
-            interaction.editReply({embeds: [embed], ephemeral: ephemeralValue})
+            interaction.reply({embeds: [embed], ephemeral: ephemeralValue})
         } else if (interaction.options.getSubcommand() == "remove") {
             let timeNow = Math.round(Date.now()/1000)
             let ephemeralValue = interaction.options.getBoolean('silent')
@@ -201,7 +200,7 @@ module.exports = {
                     .setTimestamp()
                     .setTitle("Error. Could not remove punishment.")
                     .setDescription(`**Punishment could not be removed since there is no currently active punishment.**`)
-                interaction.editReply({embeds: [embed], ephemeral: true})
+                interaction.reply({embeds: [embed], ephemeral: true})
             } else {
                 if (currentFetch.end_timestamp < timeNow) {
                     let embed = new Discord.MessageEmbed()
@@ -209,7 +208,7 @@ module.exports = {
                         .setTimestamp()
                         .setTitle("Error. Could not remove punishment.")
                         .setDescription(`**There is no currently active punishment.**`)
-                    interaction.editReply({embeds: [embed], ephemeral: true})
+                    interaction.reply({embeds: [embed], ephemeral: true})
                 } else {
                     let historyArray;
                     if (historyFetch != undefined) {historyArray = historyFetch.data;} else {historyArray = []}
@@ -237,7 +236,7 @@ module.exports = {
                         .addField(`Punishment removed by:`, `User: <@${interaction.user.id}>\nUser tag: ${interaction.user.tag}\nUser ID: ${interaction.user.id}`)
                     let logchannel = await client.channels.fetch(config.channels.logChannelId)
                     logchannel.send({embeds: [logembed]})
-                    interaction.editReply({embeds: [embed], ephemeral: ephemeralValue})
+                    interaction.reply({embeds: [embed], ephemeral: ephemeralValue})
                 }
             }
         }

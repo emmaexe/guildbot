@@ -32,7 +32,6 @@ module.exports = {
             .setDescription("General guild statistics and information.")
         ),
     async execute(client, interaction) {
-        await interaction.deferReply()
         if (interaction.options.getSubcommand() == 'checkuser') {
             let discordUser = interaction.options.getUser('target')
             await MongoClient.connect()
@@ -45,7 +44,7 @@ module.exports = {
             } else {
                 inGameName = res.minecraft_name;
             }
-            if (inGameName == undefined) return interaction.editReply({
+            if (inGameName == undefined) return interaction.reply({
                 content: "**There was an error while executing this command!**\n*You must enter a discord user with a valid linked minecraft account (see the **/link** command)*",
                 ephemeral: true
             })
@@ -72,7 +71,7 @@ module.exports = {
                             data = await strData.json()
                             if (data.success != true) {
                                 console.error(data);
-                                return interaction.editReply({
+                                return interaction.reply({
                                     content: `**There was an error while executing this command!**\n*No additional information available.*`,
                                     ephemeral: true
                                 })
@@ -110,7 +109,7 @@ module.exports = {
                                 .setCustomId('guildcommand_user')
                             let row = new Discord.MessageActionRow()
                                 .addComponents(memberButton, userButton)
-                            interaction.editReply({
+                            interaction.reply({
                                 content: `||{"uuid":"${member.uuid}","tag":"${discordUser.tag}"}||`,
                                 embeds: [embed],
                                 components: [row]
@@ -122,6 +121,7 @@ module.exports = {
                 console.error(hGuoild)
             }
         } else if (interaction.options.getSubcommand() == 'leaderboard') {
+            await interaction.deferReply()
             await MongoClient.connect()
             const db = MongoClient.db()
             let res = await db.collection('hypixel-api-data').findOne({ sid: "guild-leaderboard-data" })
@@ -157,7 +157,7 @@ module.exports = {
             let data = await strData.json()
             if (data.success != true) {
                 console.error(data);
-                return interaction.editReply({
+                return interaction.reply({
                     content: `**There was an error while executing this command!**\n*No additional information available.*`,
                     ephemeral: true
                 })
@@ -229,7 +229,7 @@ module.exports = {
                 .addField(`Publicly listed / Joinable:`, `${publiclyListed} / ${joinable}`)
                 .addField(`Preferred games:`, `${games}`)
                 .addField(`Top 10 most played games:`, `${mostPlayedStr}`)
-            interaction.editReply({
+            interaction.reply({
                 embeds: [embed]
             })
         }
