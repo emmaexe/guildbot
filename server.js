@@ -154,6 +154,19 @@ client.on('guildMemberRemove', async (member) => {
 client.on('messageCreate', async (message) => {
     if (message.guild) {
         if (message.guild.id != config.discordGuildId) return;
+        if (message.mentions.members.size >= 0 && !message.author.bot) {
+            message.mentions.members.forEach(async member => {
+                await MongoClient.connect()
+                let db = MongoClient.db()
+                let away = await db.collection('away-system').findOne({ discord_id: member.id })
+                await MongoClient.close()
+                if (away != undefined) {
+                    if (away.status == true) {
+                        message.reply({allowedMentions: {repliedUser: false}, content: `\`\`${member.displayName}\`\` is currently away. You can check their away status using \`\`/away view\`\`.`})
+                    }
+                }
+            })
+        }
         if (message.channel.type == 'GUILD_TEXT' && message.channel.name.startsWith('ticket-') && !message.author.bot) {
             await MongoClient.connect()
             let db = MongoClient.db()
@@ -170,7 +183,7 @@ client.on('messageCreate', async (message) => {
                     ephemeral: true
                 })
             }
-            MongoClient.close()
+            await MongoClient.close()
         }
     }
 })
