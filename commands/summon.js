@@ -4,8 +4,6 @@ const config = require('../config.json')
 const mongo = require('mongodb');
 const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
 
-
-
 module.exports = {
     help: false,
     data: new SlashCommandBuilder()
@@ -30,13 +28,17 @@ module.exports = {
                 .setName('ephemeral')
                 .setDescription('If the reply should be ephemeral or not.')
                 .setRequired(true)
-                )
+            )
             .addIntegerOption(option => option
                 .setName('count')
                 .setDescription('Amount of users to consider (max 25).')
                 .setRequired(true)
-                )
             )
+        )
+        .addSubcommand(command => command
+            .setName('ticket-button')
+            .setDescription('Summons an empty message with an embedded button for opening tickets.')
+        )
         ,
     async execute(client, interaction) {
         if (interaction.options.getSubcommand() == 'menu') {
@@ -92,6 +94,19 @@ module.exports = {
                     })
                 }    
             })
+        } else if (interaction.options.getSubcommand() == 'ticket-button') {
+            if (config.tickets.enabled) {
+                let button = new Discord.MessageButton()
+                    .setStyle(2)
+                    .setEmoji('🎫')
+                    .setCustomId('open_ticket')
+                const row = new Discord.MessageActionRow()
+                    .addComponents(button)
+                interaction.channel.send({content: "​", components: [row]}) //ZERO-WIDTH SPACE
+                interaction.reply({content: "Object summoned successfully.", ephemeral: true})
+            } else {
+                interaction.reply({content: "The ticket system is disabled.", ephemeral: true})
+            }
         }
     },
 };

@@ -24,7 +24,7 @@ client.on('error', async (err) => {
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
     await MongoClient.connect()
-    let db = MongoClient.db()
+    const db = MongoClient.db()
     db.collection('starboard').findOne({}, async function (err, res) {
         if (err) throw err;
         if (res != undefined) {
@@ -36,7 +36,7 @@ client.on('ready', async () => {
     client.user.setActivity(`over ${guild.name}`, {type: "WATCHING"})
     client.commands = new Discord.Collection();
     const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-    for (const file of commandFiles) {const command = require(`./commands/${file}`); client.commands.set(command.data.name, command);}
+    for (const file of commandFiles) {const command = require(`./commands/${file}`); if (command.data) {client.commands.set(command.data.name, command);};}
     const deployCommands = require(`./slashCommands.js`);
     deployCommands.deploy(client, client.user.id, config.discordGuildId)
     functions.checkForUpdates(client)
@@ -78,7 +78,7 @@ client.on('interactionCreate', async (interaction) => {
         }
         if (command.cooldown) {
             await MongoClient.connect()
-            let db = MongoClient.db()
+            const db = MongoClient.db()
             let nextAvailable = await db.collection('cooldown').findOne(qfilter)
             if (nextAvailable == undefined) nextAvailable = 0;
             if (nextAvailable - now > 0) {
@@ -157,7 +157,7 @@ client.on('messageCreate', async (message) => {
         if (message.mentions.members.size >= 0 && !message.author.bot) {
             message.mentions.members.forEach(async member => {
                 await MongoClient.connect()
-                let db = MongoClient.db()
+                const db = MongoClient.db()
                 let away = await db.collection('away-system').findOne({ discord_id: member.id })
                 await MongoClient.close()
                 if (away != undefined) {
@@ -167,66 +167,6 @@ client.on('messageCreate', async (message) => {
                 }
             })
         }
-        if (message.channel.type == 'GUILD_TEXT' && message.channel.name.startsWith('ticket-') && !message.author.bot) {
-            await MongoClient.connect()
-            let db = MongoClient.db()
-            let res = await db.collection('tickets').findOne({ sid: 'ticket_introduction_message', discord_id: message.author.id })
-            if (res == undefined) {
-                await db.collection('tickets').insertOne({ sid: 'ticket_introduction_message', discord_id: message.author.id })
-                const embed = new Discord.MessageEmbed()
-                    .setTitle(`**Hello ${message.author.tag}, welcome to ${message.guild.name}!**`)
-                    .setDescription(`I see it is your first time opening a ticket here. If you are here to apply for guild membership, **please do not bother the staff unless you have a problem**.\nThis process is completely automated and handled by me.\nIf you wish to apply you must do the following:\n\`\`\`• Log on to the hypixel network and set your discord account in the social menu (/link tutorial for more information on how to do that.)\n• Use the /link update command so I can confirm you are the owner of that minecraft account. (Make sure you use my /link command not the commands of other bots)\n• Use the /apply command to submit your application. \n\`\`\`If your application is accepted, you will be placed in an invite queue, and **a member of the staff team will invite you when they are online**.`)
-                    .setFooter({text: `You are seeing this message because it is your first time opening a ticket. This message will not be repeated.`})
-                    .setTimestamp()
-                await message.reply({
-                    embeds: [embed],
-                    ephemeral: true
-                })
-            }
-            await MongoClient.close()
-        }
-    }
-})
-
-client.on('channelCreate', async (channel) => {
-    if (channel.type == 'GUILD_TEXT' && channel.name.startsWith('ticket-')) {
-        setTimeout(() => {
-            channel.setParent(config.channels.ticketCategoryId, { lockPermissions: false })
-            let embed = new Discord.MessageEmbed()
-                .setColor(config.colours.main)
-                .setTitle('**A staff member will be here to help you soon.**')
-                .setTimestamp()
-            let nomembershipembed = new Discord.MessageEmbed()
-                .setColor(config.colours.main)
-                .setTitle('**A staff member will be here to help you soon.**')
-                .setDescription(`**Looking to join the guild?**\n[Guild forums post](${config.url.forums_post})\n*To apply, run the **/apply** command in a ticket.*\n**Applied and accepted?**\nAn invite will be sent to you when a staff member is online.\n**You aren\'t online?**\nAn offline invite will be sent. This means the next time you next log in, you will have 5 minutes to join the guild before the invite expires.`)
-                .setTimestamp()
-            let linkingEmbed = new Discord.MessageEmbed()
-                .setColor(config.colours.main)
-                .setTitle('**Before applying, please link your account!**')
-                .setDescription('If you are here to apply for guild membership:\nBefore you may apply, you must link your minecraft account to your discord account. Press the button to learn more.')
-                .setTimestamp()
-            let linkHelpButton = new Discord.MessageButton()
-                .setStyle(2)
-                .setEmoji('ℹ️')
-                .setLabel('Learn more.')
-                .setCustomId('link_help_button')
-            let row = new Discord.MessageActionRow()
-                .addComponents(linkHelpButton)
-            channel.messages.fetch().then(async messages => {
-                let id = await messages.find(m => /\<\@[0123456789]*\>/.test(m.content)).content.replace(/[^0123456789]/g, '')
-                let member = await channel.guild.members.fetch(id)
-                if (member) {
-                    if (member.roles.cache.has(config.roles.guildMemberRole)) {
-                        channel.send({embeds: [embed]})
-                    } else {
-                        channel.send({embeds: [nomembershipembed, linkingEmbed], components:[row]})
-                    }        
-                } else {
-                    channel.send({embeds: [nomembershipembed, linkingEmbed], components:[row]})
-                }
-            }).catch(console.error);
-        }, 1000);
     }
 })
 
@@ -249,7 +189,7 @@ client.on('messageReactionAdd', async (messageReaction, user) => {
         }
         let qfilter = {messageid: message.id}
         await MongoClient.connect()
-        let db = MongoClient.db()
+        const db = MongoClient.db()
         db.collection('starboard').findOne(qfilter, async function (err, res) {
             if (res == undefined) {
                 let starboard = await client.channels.fetch(config.channels.starboardChannelId)
@@ -292,7 +232,7 @@ client.on('messageReactionRemove', async (messageReaction, user) => {
         }
         let qfilter = {messageid: message.id}
         await MongoClient.connect()
-        let db = MongoClient.db()
+        const db = MongoClient.db()
         db.collection('starboard').findOne(qfilter, async function (err, res) {
             if (err) throw err;
             if (res == undefined) {
@@ -432,7 +372,7 @@ if (config.chatbridge.enabled) {
                 })
                 if (config.chatbridge.guildJoinLeaveMessages.logging) {
                     await MongoClient.connect()
-                    let db = MongoClient.db()
+                    const db = MongoClient.db()
                     let res = await db.collection('minecraft-accounts').findOne({ minecraft_uuid: namedata.uuid })
                     await MongoClient.close()
                     let uuid; if (namedata.uuid == undefined) {uuid = "*unavailable*"} else {uuid = namedata.uuid}
@@ -449,7 +389,7 @@ if (config.chatbridge.enabled) {
                 }
                 if (config.modals.guildLeaveFeedback.enabled) {
                     await MongoClient.connect()
-                    let db = MongoClient.db()
+                    const db = MongoClient.db()
                     let res = await db.collection('minecraft-accounts').findOne({ minecraft_uuid: namedata.uuid })
                     await MongoClient.close()
                     let uuid; if (namedata.uuid == undefined) {uuid = undefined} else {uuid = namedata.uuid}
@@ -471,7 +411,7 @@ if (config.chatbridge.enabled) {
                     'avatarURL': `https://crafatar.com/renders/head/${namedata.uuid}`
                 })
                 await MongoClient.connect()
-                let db = MongoClient.db()
+                const db = MongoClient.db()
                 let res = await db.collection('minecraft-accounts').findOne({ minecraft_uuid: namedata.uuid })
                 await MongoClient.close()
                 if (config.chatbridge.guildJoinLeaveMessages.logging) {

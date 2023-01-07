@@ -39,7 +39,7 @@ module.exports = {
             if (!away) { reason = ""; }
             if (reason == undefined) { reason = ""; }
             await MongoClient.connect()
-            let db = MongoClient.db()
+            const db = MongoClient.db()
             let exists = await db.collection('away-system').findOne({ discord_id: interaction.user.id })
             if (exists == undefined) {
                 await db.collection('away-system').insertOne({ discord_id: interaction.user.id, status: away, reason: reason })

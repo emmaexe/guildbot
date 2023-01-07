@@ -95,20 +95,20 @@ module.exports = {
             }
             setTimeout(async () => {
                 await MongoClient.connect()
-                const db = await MongoClient.db()
-                await db.collection('hypixel-api-data').findOne({ sid: "guild-leaderboard-data" }, async function(err, res) {
+                const db = MongoClient.db()
+                db.collection('hypixel-api-data').findOne({ sid: "guild-leaderboard-data" }, async function(err, res) {
                     if (err) throw err;
                     if (res == null) {
-                        await db.collection('hypixel-api-data').insertOne({sid: "guild-leaderboard-data", data: leaderboardData, timestamp: Date.now()}, function(err, res) {
+                        db.collection('hypixel-api-data').insertOne({sid: "guild-leaderboard-data", data: leaderboardData, timestamp: Date.now()}, async function(err, res) {
                             if (err) throw err;
-                            MongoClient.close()
+                            await MongoClient.close()
                         })
                     } else {
                         await db.collection('hypixel-api-data').updateOne({ sid: "guild-leaderboard-data" }, { $set: { data: leaderboardData, timestamp: Date.now() } })
-                        MongoClient.close()
+                        await MongoClient.close()
                     }
                 })
-            }, 5000)
+            }, 1500)
         } else {
             console.error(hGuild)
         }

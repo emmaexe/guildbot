@@ -85,7 +85,7 @@ module.exports = {
             } else {
                 let endtime = Math.round(timeNow+time);
                 await MongoClient.connect()
-                let db = MongoClient.db()
+                const db = MongoClient.db()
                 let res = await db.collection('guild_application_bans').findOne({ discord_id: target.id })
                 if (res == undefined) {
                     await db.collection('guild_application_bans').insertOne({ discord_id: target.id, discord_tag: target.tag, start_timestamp: timeNow, end_timestamp: endtime, length: time, reason: reason, admin: {discord_id: interaction.user.id, discord_tag: interaction.user.tag} })
@@ -155,7 +155,7 @@ module.exports = {
                 .setThumbnail(target.displayAvatarURL())
                 .setTitle(`Punishment history for ${target.tag} (${target.id})`)
             await MongoClient.connect()
-            let db = MongoClient.db()
+            const db = MongoClient.db()
             let currentFetch = await db.collection('guild_application_bans').findOne({ discord_id: target.id })
             let historyFetch = await db.collection('guild_application_bans_history').findOne({ discord_id: target.id })
             MongoClient.close()
@@ -191,7 +191,7 @@ module.exports = {
             let ephemeralValue = interaction.options.getBoolean('silent')
             let target = interaction.options.getUser('target')
             await MongoClient.connect()
-            let db = MongoClient.db()
+            const db = MongoClient.db()
             let currentFetch = await db.collection('guild_application_bans').findOne({ discord_id: target.id })
             let historyFetch = await db.collection('guild_application_bans_history').findOne({ discord_id: target.id })
             if (currentFetch == undefined) {
