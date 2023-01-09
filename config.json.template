@@ -1,6 +1,6 @@
 {
-    "discordGuildId": "DISCORDID",
-    "hypixelGuildId":"UUID",
+    "discordGuildId": DISCORDID,
+    "hypixelGuildId": UUID,
     "colours": {
         "main":"00FFF0",
         "secondary":"202225",
@@ -9,22 +9,21 @@
         "error":"FF1F00"
     },
     "roles":{
-        "guildMemberRole":"DISCORDID",
-        "helpers":["DISCORDID", "DISCORDID", ...],
-        "adminRole":["DISCORDID", "DISCORDID", ...]
+        "guildMemberRole":DISCORDID,
+        "helpers":[DISCORDID, DISCORDID, ...],
+        "adminRole":[DISCORDID, DISCORDID, ...]
     },
     "scheduledEvents": {
         "leaderboardDataUpdate":"*/1 * * * *"
     },
     "channels":{
-        "logChannelId":"DISCORDID",
-        "appChannelId":"DISCORDID",
-        "queueChannelId":"DISCORDID",
-        "ticketCategoryId":"DISCORDID",
-        "starboardChannelId":"DISCORDID",
+        "logChannelId":DISCORDID,
+        "appChannelId":DISCORDID,
+        "queueChannelId":DISCORDID,
+        "starboardChannelId":DISCORDID,
         "memberCount": {
-            "discord":"DISCORDID",
-            "guild":"DISCORDID"
+            "discord":DISCORDID,
+            "guild":DISCORDID
         }
     },
     "emoji": {
@@ -49,22 +48,22 @@
     },
     "selectMenus": [
         {
-            "name":"UNIQUE_STRING",
-            "description":"STRING",
-            "placeholder":"STRING",
+            "name":UNIQUE_STRING,
+            "description":STRING,
+            "placeholder":STRING,
             "disabled":BOOLEAN,
             "maxValues":INTEGER,
             "minValues":INTEGER,
             "options":[
-                {"value": "UNIQUE_STRING-example_name_1", "label": "STRING", "description": "STRING", "emoji": "EMOJI"},
-                {"value": "UNIQUE_STRING-example_name_2", "label": "STRING", "description": "STRING", "emoji": "EMOJI"},
-                {"value": "UNIQUE_STRING-example_name_3", "label": "STRING", "description": "STRING", "emoji": "EMOJI"},
+                {"value": "UNIQUE_STRING-example_name_1", "label": STRING, "description": STRING, "emoji": EMOJI_NAME},
+                {"value": "UNIQUE_STRING-example_name_2", "label": STRING, "description": STRING, "emoji": EMOJI_NAME},
+                {"value": "UNIQUE_STRING-example_name_3", "label": STRING, "description": STRING, "emoji": EMOJI_NAME},
                 ...
             ],
             "actions": {
-                "UNIQUE_STRING-example_name_1":{ "actionType":"toggleRole", "roleID":"DISCORDID" },
-                "UNIQUE_STRING-example_name_2":{ "actionType":"removeRole", "roleID":"DISCORDID" },
-                "UNIQUE_STRING-example_name_3":{ "actionType":"addRole", "roleID":"DISCORDID" },
+                "UNIQUE_STRING-example_name_1":{ "actionType":"toggleRole", "roleID":DISCORDID },
+                "UNIQUE_STRING-example_name_2":{ "actionType":"removeRole", "roleID":DISCORDID },
+                "UNIQUE_STRING-example_name_3":{ "actionType":"addRole", "roleID":DISCORDID },
                 ...
             }
         },
@@ -89,13 +88,20 @@
             }
         }
     },
+    "tickets":{
+        "enabled": BOOLEAN,
+        "ticketTranscript": BOOLEAN,
+        "userHasTranscript": BOOLEAN,
+        "userCanClose": BOOLEAN,
+        "categoryId":DISCORDID
+    },
     "chatbridge":{
         "enabled":BOOLEAN,
-        "channelId": "DISCORDID",
+        "channelId": DISCORDID,
         "webhook": "URL",
         "messagelogging": {
             "enabled":BOOLEAN,
-            "channelId": "DISCORDID"
+            "channelId": DISCORDID
         },
         "relogOnKick": {
             "enabled": BOOLEAN,

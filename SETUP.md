@@ -31,8 +31,8 @@ The **config.json** file is used for saving less sesitive configuration data.
 ```json
 
 {
-    "discordGuildId": "DISCORDID",
-    "hypixelGuildId":"UUID",
+    "discordGuildId": DISCORDID,
+    "hypixelGuildId": UUID,
     "colours": {
         "main":"00FFF0",
         "secondary":"202225",
@@ -41,26 +41,25 @@ The **config.json** file is used for saving less sesitive configuration data.
         "error":"FF1F00"
     },
     "roles":{
-        "guildMemberRole":"DISCORDID",
-        "helpers":["DISCORDID", "DISCORDID", ...],
-        "adminRole":["DISCORDID", "DISCORDID", ...]
+        "guildMemberRole":DISCORDID,
+        "helpers":[DISCORDID, DISCORDID, ...],
+        "adminRole":[DISCORDID, DISCORDID, ...]
     },
     "scheduledEvents": {
         "leaderboardDataUpdate":"*/1 * * * *"
     },
     "channels":{
-        "logChannelId":"DISCORDID",
-        "appChannelId":"DISCORDID",
-        "queueChannelId":"DISCORDID",
-        "ticketCategoryId":"DISCORDID",
-        "starboardChannelId":"DISCORDID",
+        "logChannelId":DISCORDID,
+        "appChannelId":DISCORDID,
+        "queueChannelId":DISCORDID,
+        "starboardChannelId":DISCORDID,
         "memberCount": {
-            "discord":"DISCORDID",
-            "guild":"DISCORDID"
+            "discord":DISCORDID,
+            "guild":DISCORDID
         }
     },
     "emoji": {
-        "warning":"<:warning_emoji:868054485992357948>",
+        "warning": "<:warning_emoji:868054485992357948>",
         "error":"<:error_emoji:868054485946224680>",
         "star":"<:GoldStar:905915895937892403>",
         "log":"<:log_emoji:868054485933625346>",
@@ -69,27 +68,34 @@ The **config.json** file is used for saving less sesitive configuration data.
         "helpButtons":"<:button:913172562001928193>",
         "helpMenus":"<:dropdown_select:914106174754947113>",
         "github":"<:github:888155742719328276>",
+        "discord":"<:DiscordLogoWhite:888158984475918368>",
         "plus":"<:plus:888072519582634075>",
-        "minus":"<:minus:888072653003452516>"
+        "minus":"<:minus:888072653003452516>",
+        "applyCommandMembership":"<:idcard:950739003265654834>",
+        "applyCommandStaff":"👮",
+        "yes":"<:yesx:865887075509338122>",
+        "no":"<:nox:865887075491643402>",
+        "arrowLeft":"◀️",
+        "arrowRight":"▶️"
     },
     "selectMenus": [
         {
-            "name":"UNIQUE_STRING",
-            "description":"STRING",
-            "placeholder":"STRING",
+            "name":UNIQUE_STRING,
+            "description":STRING,
+            "placeholder":STRING,
             "disabled":BOOLEAN,
             "maxValues":INTEGER,
             "minValues":INTEGER,
             "options":[
-                {"value": "UNIQUE_STRING-example_name_1", "label": "STRING", "description": "STRING", "emoji": "EMOJI"},
-                {"value": "UNIQUE_STRING-example_name_2", "label": "STRING", "description": "STRING", "emoji": "EMOJI"},
-                {"value": "UNIQUE_STRING-example_name_3", "label": "STRING", "description": "STRING", "emoji": "EMOJI"},
+                {"value": "UNIQUE_STRING-example_name_1", "label": STRING, "description": STRING, "emoji": EMOJI_NAME},
+                {"value": "UNIQUE_STRING-example_name_2", "label": STRING, "description": STRING, "emoji": EMOJI_NAME},
+                {"value": "UNIQUE_STRING-example_name_3", "label": STRING, "description": STRING, "emoji": EMOJI_NAME},
                 ...
             ],
             "actions": {
-                "UNIQUE_STRING-example_name_1":{ "actionType":"toggleRole", "roleID":"DISCORDID" },
-                "UNIQUE_STRING-example_name_2":{ "actionType":"removeRole", "roleID":"DISCORDID" },
-                "UNIQUE_STRING-example_name_3":{ "actionType":"addRole", "roleID":"DISCORDID" },
+                "UNIQUE_STRING-example_name_1":{ "actionType":"toggleRole", "roleID":DISCORDID },
+                "UNIQUE_STRING-example_name_2":{ "actionType":"removeRole", "roleID":DISCORDID },
+                "UNIQUE_STRING-example_name_3":{ "actionType":"addRole", "roleID":DISCORDID },
                 ...
             }
         },
@@ -114,17 +120,24 @@ The **config.json** file is used for saving less sesitive configuration data.
             }
         }
     },
+    "tickets":{
+        "enabled": BOOLEAN,
+        "ticketTranscript": BOOLEAN,
+        "userHasTranscript": BOOLEAN,
+        "userCanClose": BOOLEAN,
+        "categoryId":DISCORDID
+    },
     "chatbridge":{
         "enabled":BOOLEAN,
-        "channelId": "DISCORDID",
+        "channelId": DISCORDID,
         "webhook": "URL",
         "messagelogging": {
             "enabled":BOOLEAN,
-            "channelId": "DISCORDID"
+            "channelId": DISCORDID
         },
         "relogOnKick": {
             "enabled": BOOLEAN,
-            "relogAmount": NUMBER
+            "relogAmount": INTEGER
         },
         "serverJoinLeaveMessages": {
             "enabled": BOOLEAN
@@ -145,10 +158,10 @@ The **config.json** file is used for saving less sesitive configuration data.
             STRING,
             ...
         ],
-        "minNetworkLevel": NUMBER
+        "minNetworkLevel": INTEGER
     },
     "starboard":{
-        "minimumCount": NUMBER
+        "minimumCount": INTEGER
     }
 }
 
@@ -194,8 +207,6 @@ For more complex configuration check the module's [repository on npmjs.com](http
 - **appChannelId** - channel used for membership application logs. Can be the same or separate as the default log channel.
 
 - **queueChannelId** - channel used for the invite queue feature - when a member is to be invited, a message gets sent in this channel with their name and an easy to copy command for staff members to use. After they are invited, the message for that member can be easily deleted via a button.
-
-- **ticketCategoryId** - category where the bot will auto-move all new created channels prefixed with "ticket-". This is used to organise "Ticket tool bot" tickets.
 
 - **starboardChannelId** - channel used for the starboard feature.
 
@@ -272,6 +283,18 @@ For more complex configuration check the module's [repository on npmjs.com](http
   - minLength - the minimum length of the text that can be entered into this field
 
   - maxLength - the maximum length of the text that can be entered into this field
+
+**tickets** contains configuration for the bot's ticket system. The bot uses its own ticket system for guild applications. A button for opening tickets can be summoned using ``/summon ticket-button``. The /ticket command is intended for staff only and server permissions should be setup that way.
+
+- **enabled** indicates whether the ticket system should be enabled or not.
+
+- **ticketTranscript** indicates whether the ticket system should generate and log a transcript of the ticket once it is closed.
+
+- **userHasTranscript** indicates whether the ticket system should generate and send a transcript of the ticket to the user once it is closed.
+
+- **userCanClose** indicates whether the user can close the ticket using the close button or if only moderators can do that.
+
+- **categoryId** is the discord ID of the category in which the ticket channel should be created.
 
 **chatbridge** is a list of configuration options regarding the two way discord-minecraft chat bridge for the guild. This option requires a separate minecraft account so that the bot can be in the guild at all times sitting in limbo watching guildchat and relaying messages between /gc and a channel in your discord server.
 
