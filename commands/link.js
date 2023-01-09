@@ -1,4 +1,3 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js')
 const config = require('../config.json')
 const fetch = require('node-fetch')
@@ -8,7 +7,7 @@ const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
 
 module.exports = {
     help: true,
-    data: new SlashCommandBuilder()
+    data: new Discord.SlashCommandBuilder()
         .setName('link')
         .setDescription(`Minecraft account linking system.`)
         .addSubcommand(subCommand => subCommand
@@ -49,14 +48,14 @@ module.exports = {
                 } else {
                     userData = res.minecraft_name;
                 }
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setColor(config.colours.main)
                     .setTimestamp()
                     .setTitle(`${user.username}#${user.discriminator}`)
                 if (userData == undefined) {
-                    embed.addField("This account is NOT linked!", `To link a minecraft account to a discord account, use the **/link update** command.`)
+                    embed.addFields([{name: "This account is NOT linked!", value: `To link a minecraft account to a discord account, use the **/link update** command.`}])
                 } else {
-                    embed.addField("This account is linked!", `**Minecraft account:** ${userData}`)
+                    embed.addFields([{name: "This account is linked!", value: `**Minecraft account:** ${userData}`}])
                 }
                 interaction.editReply({
                     embeds: [embed],
@@ -103,65 +102,64 @@ module.exports = {
                                     MongoClient.close()
                                 }
                             })
-                            let logembed = new Discord.MessageEmbed()
+                            let logembed = new Discord.EmbedBuilder()
                                 .setColor(config.colours.main)
                                 .setTimestamp()
                                 .setTitle(`${config.emoji.log} LOG`)
-                                .addField(`**Account link successful.**`, `**Discord account tag:** ${interaction.user.tag}\n**Discord account ID:** ${interaction.user.id}\n**Minecraft account name:** ${uuid_data.name}\n**Minecraft account UUID:** ${uuid_data.id}\n`)
+                                .addFields([{name: `**Account link successful.**`, value: `**Discord account tag:** ${interaction.user.tag}\n**Discord account ID:** ${interaction.user.id}\n**Minecraft account name:** ${uuid_data.name}\n**Minecraft account UUID:** ${uuid_data.id}\n`}])
                             let logchannel = client.channels.cache.get(config.channels.logChannelId)
                             logchannel.send({
                                 embeds: [logembed]
                             })
-                            let embed = new Discord.MessageEmbed()
+                            let embed = new Discord.EmbedBuilder()
                                 .setColor(config.colours.main)
                                 .setTimestamp()
-                                .addField("Success.", `Successfully linked **${uuid_data.name}** to **<@${interaction.user.id}>**`)
+                                .addFields([{name: "Success.", value: `Successfully linked **${uuid_data.name}** to **<@${interaction.user.id}>**`}])
                             interaction.editReply({embeds: [embed], allowedMentions: { repliedUser: false }})
                         } else {
-                            let embed = new Discord.MessageEmbed()
+                            let embed = new Discord.EmbedBuilder()
                                 .setColor(config.colours.error)
                                 .setTimestamp()
                                 .setTitle(`${config.emoji.error} An error has occurred.`)
-                                .addField(`**This player\'s discord account does not match your discord account.**`, `**You need to set your discord account in the profile menu on Hypixel.**\nMake sure you entered your full discord tag (e.g. **Username#0001**).`)
+                                .addFields([{name: `**This player\'s discord account does not match your discord account.**`, value: `**You need to set your discord account in the profile menu on Hypixel.**\nMake sure you entered your full discord tag (e.g. **Username#0001**).`}])
                             interaction.editReply({embeds: [embed], allowedMentions: { repliedUser: false }})
                             setTimeout(() => {interaction.deleteReply()}, 15000);
                         }
                     } else {
                         //Throw error -> User has not set their DISCORD account in game
-                        let embed = new Discord.MessageEmbed()
+                        let embed = new Discord.EmbedBuilder()
                                 .setColor(config.colours.error)
                                 .setTimestamp()
                                 .setTitle(`${config.emoji.error} An error has occurred.`)
-                                .addField(`**This player\'s discord account does not match your discord account.**`, `**You need to set your discord account in the profile menu on Hypixel.**\nMake sure you entered your full discord tag (e.g. **Username#0001**).`)
+                                .addFields([{name: `**This player\'s discord account does not match your discord account.**`, value: `**You need to set your discord account in the profile menu on Hypixel.**\nMake sure you entered your full discord tag (e.g. **Username#0001**).`}])
                         interaction.editReply({embeds: [embed], allowedMentions: { repliedUser: false }})
                         setTimeout(() => {interaction.deleteReply()}, 15000);
                     }
                 } else {
-                    let embed = new Discord.MessageEmbed()
+                    let embed = new Discord.EmbedBuilder()
                         .setColor(config.colours.error)
                         .setTimestamp()
                         .setTitle(`${config.emoji.error} An error has occurred.`)
-                        .addField(`**${data.cause}**`, `*This probably means the API key is invalid. Ping <@299265668522442752>.*`)
+                        .addFields([{name: `**${data.cause}**`, value: `*This probably means the API key is invalid.*`}])
                     interaction.editReply({embeds: [embed], allowedMentions: { repliedUser: false }})
                     setTimeout(() => {interaction.deleteReply()}, 15000);
-                    let logembed = new Discord.MessageEmbed()
+                    let logembed = new Discord.EmbedBuilder()
                         .setColor(config.colours.error)
                         .setTimestamp()
                         .setTitle(`${config.emoji.error} ERROR`)
-                        .addField(`**Cause: **`, `A player ran a bot command and the Hypixel API key provided by the config file was invalid.`)
+                        .addFields([{name: `**Cause: **`, value: `A player ran a bot command and the Hypixel API key provided by the config file was invalid.`}])
                     let logchannel = client.channels.cache.get(config.channels.logChannelId)
-                    logchannel.send({
-                        content: "<@299265668522442752> <@299265668522442752> <@299265668522442752>", 
+                    logchannel.send({ 
                         embeds: [logembed]
                     })
                 }
             } else {
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setColor(config.colours.error)
                     .setTimestamp()
                     .setTitle(`${config.emoji.error} An error has occurred.`)
-                    .addField(`**A Mojang API error occurred**`, `*This probably means the username you entered does not exist.*`)
-                    try{embed.addField(`**Additional info available: ${uuid_data.error}**`, `**${uuid_data.errorMessage}**`)}catch(err){}
+                    .addFields([{name: `**A Mojang API error occurred**`, value: `*This probably means the username you entered does not exist.*`}])
+                    try{embed.addFields([{name: `**Additional info available: ${uuid_data.error}**`, value: `**${uuid_data.errorMessage}**`}])}catch(err){}
                 interaction.editReply({embeds: [embed], allowedMentions: { repliedUser: false }})
                 setTimeout(() => {interaction.deleteReply()}, 15000);
             }

@@ -3,10 +3,10 @@ const config = require('../config.json')
 
 module.exports = {
     async execute(client, interaction) {
-        let nembed = new Discord.MessageEmbed()
+        let nembed = new Discord.EmbedBuilder()
             .setColor(config.colours.main)
             .setTimestamp()
-            .addField('**Guild applications**', `**Staff application**\nTo apply for a staff position, fill in [this form](${config.url.guild_staff_application}).`)
+            .addFields([{name: '**Guild applications**', value: `**Staff application**\nTo apply for a staff position, fill in [this form](${config.url.guild_staff_application}).`}])
         interaction.update({
             embeds: [nembed],
             components: []

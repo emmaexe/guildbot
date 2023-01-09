@@ -4,19 +4,17 @@ const config = require('../config.json')
 
 module.exports = {
     async execute(client, interaction) {
-        let buttonFoward = new Discord.MessageButton()
-            .setStyle(2)
+        let buttonFoward = new Discord.ButtonBuilder()
+            .setStyle(Discord.ButtonStyle.Secondary)
             .setEmoji(config.emoji.arrowRight)
-            .setLabel('')
             .setCustomId('help_menu_2')
-        let buttonBackwards = new Discord.MessageButton()
-            .setStyle(2)
+        let buttonBackwards = new Discord.ButtonBuilder()
+            .setStyle(Discord.ButtonStyle.Secondary)
             .setEmoji(config.emoji.arrowLeft)
-            .setLabel('')
             .setCustomId('help_menu_0')
-        let row = new Discord.MessageActionRow()
+        let row = new Discord.ActionRowBuilder()
             .addComponents(buttonBackwards, buttonFoward)
-        const embed = new Discord.MessageEmbed()
+        const embed = new Discord.EmbedBuilder()
             .setColor(config.colours.secondary)
             .setTimestamp()
             .setFooter({text: 'Developed by @emmaexe#0859'})
@@ -24,7 +22,7 @@ module.exports = {
         const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
         for (const file of commandFiles) {
             const command = require(`../commands/${file}`);
-            if (command.help) {embed.addField(`**/${command.data.name}**`, `${command.data.description}`)}
+            if (command.help) {embed.addFields([{name: `**/${command.data.name}**`, value: `${command.data.description}`}])}
         }
         interaction.update({
             embeds: [embed],

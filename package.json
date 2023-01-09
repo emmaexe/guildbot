@@ -8,19 +8,16 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "@discordjs/builders": "^0.13.0",
-    "@discordjs/rest": "^0.1.0-canary.0",
     "compare-versions": "^4.1.2",
-    "discord-api-types": "^0.23.1",
-    "discord-html-transcripts": "^2.6.1",
-    "discord.js": "^13.7.0",
+    "discord-html-transcripts": "^3.1.2",
+    "discord.js": "^14.7.1",
     "dotenv": "^10.0.0",
-    "mineflayer": "^4.1.0",
+    "mineflayer": "^4.0.0",
     "mongodb": "^4.2.2",
     "node-schedule": "^2.0.0"
   },
   "engines": {
-    "node": "17.x"
+    "node": "18.x"
   },
   "repository": {
     "url": "https://github.com/emmaexe/guildbot",
@@ -28,5 +25,5 @@
     "urlRaw": "https://raw.githubusercontent.com/emmaexe/guildbot/main/"
   },
   "supportServer": "https://discord.gg/v4YrAgBRvz",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0-only"
 }

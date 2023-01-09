@@ -1,6 +1,3 @@
-const {
-    SlashCommandBuilder
-} = require('@discordjs/builders');
 const Discord = require('discord.js')
 const config = require('../config.json')
 require('dotenv').config()
@@ -11,7 +8,7 @@ const server = require('../server.js')
 
 module.exports = {
     help: false,
-    data: new SlashCommandBuilder()
+    data: new Discord.SlashCommandBuilder()
         .setName('appban')
         .setDescription(`Ban a person from submitting guild applications.`)
         .addSubcommand(subcommand => subcommand
@@ -90,18 +87,18 @@ module.exports = {
                 if (res == undefined) {
                     await db.collection('guild_application_bans').insertOne({ discord_id: target.id, discord_tag: target.tag, start_timestamp: timeNow, end_timestamp: endtime, length: time, reason: reason, admin: {discord_id: interaction.user.id, discord_tag: interaction.user.tag} })
                     await MongoClient.close()
-                    let embed = new Discord.MessageEmbed()
+                    let embed = new Discord.EmbedBuilder()
                         .setColor(config.colours.success)
                         .setTimestamp()
                         .setThumbnail(target.displayAvatarURL())
                         .setTitle(`New punishment added.`)
-                        .addField(`New punishment data:`, `**Target:** *<@${target.id}> (${target.tag})*\n**Target ID:** *${target.id}*\n**Punishment given by:** *<@${interaction.user.id}> (${interaction.user.tag}, ${interaction.user.id})*\n**Reason for punishment:** *${reason}*\n**Punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`)
-                    let logembed = new Discord.MessageEmbed()
+                        .addFields([{name: `New punishment data:`, value: `**Target:** *<@${target.id}> (${target.tag})*\n**Target ID:** *${target.id}*\n**Punishment given by:** *<@${interaction.user.id}> (${interaction.user.tag}, ${interaction.user.id})*\n**Reason for punishment:** *${reason}*\n**Punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`}])
+                    let logembed = new Discord.EmbedBuilder()
                         .setColor(config.colours.main)
                         .setTimestamp()
                         .setThumbnail(target.displayAvatarURL())
                         .setTitle(`${config.emoji.log} LOG`)
-                        .addField(`New punishment added:`, `**Target:** *<@${target.id}> (${target.tag})*\n**Target ID:** *${target.id}*\n**Punishment given by:** *<@${interaction.user.id}> (${interaction.user.tag}, ${interaction.user.id})*\n**Reason for punishment:** *${reason}*\n**Punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`)
+                        .addFields([{name: `New punishment added:`, value: `**Target:** *<@${target.id}> (${target.tag})*\n**Target ID:** *${target.id}*\n**Punishment given by:** *<@${interaction.user.id}> (${interaction.user.tag}, ${interaction.user.id})*\n**Reason for punishment:** *${reason}*\n**Punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`}])
                     let logchannel = await client.channels.fetch(config.channels.logChannelId)
                     logchannel.send({embeds: [logembed]})
                     interaction.reply({embeds: [embed], ephemeral: ephemeralValue})
@@ -118,26 +115,30 @@ module.exports = {
                     }
                     await db.collection('guild_application_bans').updateOne({ discord_id: target.id }, { $set: { discord_id: target.id, discord_tag: target.tag, start_timestamp: timeNow, end_timestamp: endtime, length: time, reason: reason, admin: {discord_id: interaction.user.id, discord_tag: interaction.user.tag} } })
                     await MongoClient.close()
-                    let embed = new Discord.MessageEmbed()
+                    let embed = new Discord.EmbedBuilder()
                         .setColor(config.colours.success)
                         .setTimestamp()
                         .setThumbnail(target.displayAvatarURL())
                         .setTitle(`Old punishment overridden.`)
-                        .addField(`Old punishment data:`, `**Target:** *<@${res.discord_id}> (${res.discord_tag})*\n**Target ID:** *${res.discord_id}*\n**Punishment given by:** *<@${res.admin.discord_id}> (${res.admin.discord_tag}, ${res.admin.discord_id})*\n**Reason for punishment:** *${res.reason}*\n**Punishment ends:** *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*`)
-                        .addField(`New punishment data:`, `**Target:** *<@${target.id}> (${target.tag})*\n**Target ID:** *${target.id}*\n**Punishment given by:** *<@${interaction.user.id}> (${interaction.user.tag}, ${interaction.user.id})*\n**Reason for punishment:** *${reason}*\n**Punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`)
-                    let logembed = new Discord.MessageEmbed()
+                        .addFields([
+                            {name: `Old punishment data:`, value: `**Target:** *<@${res.discord_id}> (${res.discord_tag})*\n**Target ID:** *${res.discord_id}*\n**Punishment given by:** *<@${res.admin.discord_id}> (${res.admin.discord_tag}, ${res.admin.discord_id})*\n**Reason for punishment:** *${res.reason}*\n**Punishment ends:** *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*`},
+                            {name: `New punishment data:`, value: `**Target:** *<@${target.id}> (${target.tag})*\n**Target ID:** *${target.id}*\n**Punishment given by:** *<@${interaction.user.id}> (${interaction.user.tag}, ${interaction.user.id})*\n**Reason for punishment:** *${reason}*\n**Punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`}
+                        ])
+                    let logembed = new Discord.EmbedBuilder()
                         .setColor(config.colours.main)
                         .setTimestamp()
                         .setThumbnail(target.displayAvatarURL())
                         .setTitle(`${config.emoji.log} LOG`)
-                        .addField(`New punishment added:`, `**Target:** *<@${target.id}> (${target.tag})*\n**Target ID:** *${target.id}*\n**Punishment given by:** *<@${interaction.user.id}> (${interaction.user.tag}, ${interaction.user.id})*\n**Reason for punishment:** *${reason}*\n**Punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`)
-                        .addField(`Old punishment removed:`, `**Target:** *<@${res.discord_id}> (${res.discord_tag})*\n**Target ID:** *${res.discord_id}*\n**Punishment given by:** *<@${res.admin.discord_id}> (${res.admin.discord_tag}, ${res.admin.discord_id})*\n**Reason for punishment:** *${res.reason}*\n**Punishment ends:** *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*`)
+                        .addFields([
+                            {name: `New punishment added:`, value: `**Target:** *<@${target.id}> (${target.tag})*\n**Target ID:** *${target.id}*\n**Punishment given by:** *<@${interaction.user.id}> (${interaction.user.tag}, ${interaction.user.id})*\n**Reason for punishment:** *${reason}*\n**Punishment ends:** *<t:${endtime}:R> (<t:${endtime}:F>)*`},
+                            {name: `Old punishment removed:`, value: `**Target:** *<@${res.discord_id}> (${res.discord_tag})*\n**Target ID:** *${res.discord_id}*\n**Punishment given by:** *<@${res.admin.discord_id}> (${res.admin.discord_tag}, ${res.admin.discord_id})*\n**Reason for punishment:** *${res.reason}*\n**Punishment ends:** *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*`}
+                        ])
                     let logchannel = await client.channels.fetch(config.channels.logChannelId)
                     logchannel.send({embeds: [logembed]})
                     interaction.reply({embeds: [embed], ephemeral: ephemeralValue})
                 } else {
                     await MongoClient.close()
-                    let embed = new Discord.MessageEmbed()
+                    let embed = new Discord.EmbedBuilder()
                         .setColor(config.colours.error)
                         .setTimestamp()
                         .setTitle("Error. Could not add punishment.")
@@ -149,7 +150,7 @@ module.exports = {
             let timeNow = Math.round(Date.now()/1000)
             let ephemeralValue = interaction.options.getBoolean('silent')
             let target = interaction.options.getUser('target')
-            let embed = new Discord.MessageEmbed()
+            let embed = new Discord.EmbedBuilder()
                 .setTimestamp()
                 .setColor(config.colours.main)
                 .setThumbnail(target.displayAvatarURL())
@@ -169,19 +170,19 @@ module.exports = {
                 }
             }
             if (currentFetch == undefined) {
-                embed.addField(`**Currently active punishment:**`, `*None.*`)
+                embed.addFields([{name: `**Currently active punishment:**`, value: `*None.*`}])
             } else {
-                embed.addField(`**Currently active punishment:**`, `Target: *<@${currentFetch.discord_id}> (${currentFetch.discord_tag})*\nTarget ID: *${currentFetch.discord_id}*\nPunishment given by: *<@${currentFetch.admin.discord_id}> (${currentFetch.admin.discord_tag}, ${currentFetch.admin.discord_id})*\nReason for punishment: *${currentFetch.reason}*\nPunishment ends: *<t:${currentFetch.end_timestamp}:R> (<t:${currentFetch.end_timestamp}:F>)*`)
+                embed.addFields([{name: `**Currently active punishment:**`, value: `Target: *<@${currentFetch.discord_id}> (${currentFetch.discord_tag})*\nTarget ID: *${currentFetch.discord_id}*\nPunishment given by: *<@${currentFetch.admin.discord_id}> (${currentFetch.admin.discord_tag}, ${currentFetch.admin.discord_id})*\nReason for punishment: *${currentFetch.reason}*\nPunishment ends: *<t:${currentFetch.end_timestamp}:R> (<t:${currentFetch.end_timestamp}:F>)*`}])
             }
             if (historyArray.length == 0) {
-                embed.addField(`**Punishment history (expired, removed or overridden punishments, higher is older):**`, `*Empty.*`)
+                embed.addFields([{name: `**Punishment history (expired, removed or overridden punishments, higher is older):**`, value: `*Empty.*`}])
             } else {
                 for (let i = 0;i<historyArray.length;i++) {
                     let res = historyArray[i]
                     if (i == 0) {
-                        embed.addField(`**Punishment history (expired, removed or overridden punishments, higher is older):**\n\nPunishment #${i+1}`, `Target: *<@${res.discord_id}> (${res.discord_tag})*\nTarget ID: *${res.discord_id}*\nPunishment given by: *<@${res.admin.discord_id}> (${res.admin.discord_tag}, ${res.admin.discord_id})*\nReason for punishment: *${res.reason}*\nPunishment ends: *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*`)
+                        embed.addFields([{name: `**Punishment history (expired, removed or overridden punishments, higher is older):**\n\nPunishment #${i+1}`, value: `Target: *<@${res.discord_id}> (${res.discord_tag})*\nTarget ID: *${res.discord_id}*\nPunishment given by: *<@${res.admin.discord_id}> (${res.admin.discord_tag}, ${res.admin.discord_id})*\nReason for punishment: *${res.reason}*\nPunishment ends: *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*`}])
                     } else {
-                        embed.addField(`Punishment #${i+1}`, `Target: *<@${res.discord_id}> (${res.discord_tag})*\nTarget ID: *${res.discord_id}*\nPunishment given by: *<@${res.admin.discord_id}> (${res.admin.discord_tag}, ${res.admin.discord_id})*\nReason for punishment: *${res.reason}*\nPunishment ends: *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*`, true)
+                        embed.addFields([{name: `Punishment #${i+1}`, value: `Target: *<@${res.discord_id}> (${res.discord_tag})*\nTarget ID: *${res.discord_id}*\nPunishment given by: *<@${res.admin.discord_id}> (${res.admin.discord_tag}, ${res.admin.discord_id})*\nReason for punishment: *${res.reason}*\nPunishment ends: *<t:${res.end_timestamp}:R> (<t:${res.end_timestamp}:F>)*`, inline: true}])
                     }
                 }
             }
@@ -195,7 +196,7 @@ module.exports = {
             let currentFetch = await db.collection('guild_application_bans').findOne({ discord_id: target.id })
             let historyFetch = await db.collection('guild_application_bans_history').findOne({ discord_id: target.id })
             if (currentFetch == undefined) {
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setColor(config.colours.error)
                     .setTimestamp()
                     .setTitle("Error. Could not remove punishment.")
@@ -203,7 +204,7 @@ module.exports = {
                 interaction.reply({embeds: [embed], ephemeral: true})
             } else {
                 if (currentFetch.end_timestamp < timeNow) {
-                    let embed = new Discord.MessageEmbed()
+                    let embed = new Discord.EmbedBuilder()
                         .setColor(config.colours.error)
                         .setTimestamp()
                         .setTitle("Error. Could not remove punishment.")
@@ -221,19 +222,21 @@ module.exports = {
                     }
                     await db.collection('guild_application_bans').deleteOne({ discord_id: target.id })
                     await MongoClient.close()
-                    let embed = new Discord.MessageEmbed()
+                    let embed = new Discord.EmbedBuilder()
                         .setColor(config.colours.success)
                         .setTimestamp()
                         .setThumbnail(target.displayAvatarURL())
                         .setTitle(`Punishment removed.`)
-                        .addField(`Punishment data:`, `**Target:** *<@${currentFetch.discord_id}> (${currentFetch.discord_tag})*\n**Target ID:** *${currentFetch.discord_id}*\n**Punishment given by:** *<@${currentFetch.admin.discord_id}> (${currentFetch.admin.discord_tag}, ${currentFetch.admin.discord_id})*\n**Reason for punishment:** *${currentFetch.reason}*\n**Punishment ends:** *<t:${currentFetch.end_timestamp}:R> (<t:${currentFetch.end_timestamp}:F>)*`)
-                    let logembed = new Discord.MessageEmbed()
+                        .addFields([{name: `Punishment data:`, value: `**Target:** *<@${currentFetch.discord_id}> (${currentFetch.discord_tag})*\n**Target ID:** *${currentFetch.discord_id}*\n**Punishment given by:** *<@${currentFetch.admin.discord_id}> (${currentFetch.admin.discord_tag}, ${currentFetch.admin.discord_id})*\n**Reason for punishment:** *${currentFetch.reason}*\n**Punishment ends:** *<t:${currentFetch.end_timestamp}:R> (<t:${currentFetch.end_timestamp}:F>)*`}])
+                    let logembed = new Discord.EmbedBuilder()
                         .setColor(config.colours.main)
                         .setTimestamp()
                         .setThumbnail(target.displayAvatarURL())
                         .setTitle(`${config.emoji.log} LOG`)
-                        .addField(`Punishment removed:`, `**Target:** *<@${currentFetch.discord_id}> (${currentFetch.discord_tag})*\n**Target ID:** *${currentFetch.discord_id}*\n**Punishment given by:** *<@${currentFetch.admin.discord_id}> (${currentFetch.admin.discord_tag}, ${currentFetch.admin.discord_id})*\n**Reason for punishment:** *${currentFetch.reason}*\n**Punishment ends:** *<t:${currentFetch.end_timestamp}:R> (<t:${currentFetch.end_timestamp}:F>)*`)
-                        .addField(`Punishment removed by:`, `User: <@${interaction.user.id}>\nUser tag: ${interaction.user.tag}\nUser ID: ${interaction.user.id}`)
+                        .addFields([
+                            {name: `Punishment removed:`, value: `**Target:** *<@${currentFetch.discord_id}> (${currentFetch.discord_tag})*\n**Target ID:** *${currentFetch.discord_id}*\n**Punishment given by:** *<@${currentFetch.admin.discord_id}> (${currentFetch.admin.discord_tag}, ${currentFetch.admin.discord_id})*\n**Reason for punishment:** *${currentFetch.reason}*\n**Punishment ends:** *<t:${currentFetch.end_timestamp}:R> (<t:${currentFetch.end_timestamp}:F>)*`},
+                            {name: `Punishment removed by:`, value: `User: <@${interaction.user.id}>\nUser tag: ${interaction.user.tag}\nUser ID: ${interaction.user.id}`}
+                        ])
                     let logchannel = await client.channels.fetch(config.channels.logChannelId)
                     logchannel.send({embeds: [logembed]})
                     interaction.reply({embeds: [embed], ephemeral: ephemeralValue})
@@ -242,21 +245,3 @@ module.exports = {
         }
     },
 };
-
-/*
-CURRENT:
-{
-    "discord_id": string,
-    "discord_tag": string,
-    "start_timestamp": timestamp,
-    "end_timestamp": timestamp,
-    "length": timestamp,
-    "reason": string
-    "admin": {discord_id: string, discord_tag: string}
-}
-HISTORY:
-[
-    "discord_id": string,
-    "data": array
-]
-*/

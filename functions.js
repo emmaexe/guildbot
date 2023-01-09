@@ -18,10 +18,10 @@ module.exports = {
         let packageData = await data.json()
         let channel = client.channels.cache.get(config.channels.logChannelId)
         if (compare(pkg.version.toString(), packageData.version.toString(), ">")) {
-            let embed = new Discord.MessageEmbed()
+            let embed = new Discord.EmbedBuilder()
                 .setColor(config.colours.warning)
                 .setTimestamp()
-                .addField(`${config.emoji.warning} Warning!`, `You are running either an unreleased or a misconfigured version of GuildBot. \nOnly proceed if you are sure you know what you're doing. \nIf not, contact ${pkg.author} about this or post an issue on the github repository: ${pkg.repository.url}.`)
+                .addFields([{name: `${config.emoji.warning} Warning!`, value: `You are running either an unreleased or a misconfigured version of GuildBot. \nOnly proceed if you are sure you know what you're doing. \nIf not, contact ${pkg.author} about this or post an issue on the github repository: ${pkg.repository.url}.`}])
             channel.send({
                 embeds: [embed]
             })
@@ -30,10 +30,10 @@ module.exports = {
             let githubApiDataRaw = await fetch(pkg.repository.urlApi + "/releases")
             let githubApiData = await githubApiDataRaw.json()
             let versionsBehind = githubApiData.findIndex(release => compare(release.tag_name.toString(), pkg.version.toString(), "=") === true)
-            let embed = new Discord.MessageEmbed()
+            let embed = new Discord.EmbedBuilder()
                 .setColor(config.colours.warning)
                 .setTimestamp()
-                .addField(`${config.emoji.warning} Warning!`, `A new version of GuildBot is available!\n**${pkg.version} => ${packageData.version}**\nYou are **${versionsBehind}** updates behind the latest update.\nDownload it now at ${githubApiData[0].html_url}`)
+                .addFields([{name: `${config.emoji.warning} Warning!`, value: `A new version of GuildBot is available!\n**${pkg.version} => ${packageData.version}**\nYou are **${versionsBehind}** updates behind the latest update.\nDownload it now at ${githubApiData[0].html_url}`}])
             channel.send({
                 embeds: [embed]
             })
@@ -219,16 +219,16 @@ module.exports = {
             if (memberId != undefined) {
                 let guild = await client.guilds.fetch(config.discordGuildId);
                 let member = await guild.members.fetch(memberId);
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setThumbnail(guild.iconURL())
                     .setColor(config.colours.main)
                     .setTitle(`**${guild.name}**`)
-                    .addField(`**We're sorry to see you go, \`\`${name}\`\`.**`, `Would you mind filling a very quick and short survey on why you left? Your feedback will be forwarded to our staff team and greatly appreciated.`)
-                let button = new Discord.MessageButton()
-                    .setStyle(2)
+                    .addFields([{name: `**We're sorry to see you go, \`\`${name}\`\`.**`, value: `Would you mind filling a very quick and short survey on why you left? Your feedback will be forwarded to our staff team and greatly appreciated.`}])
+                let button = new Discord.ButtonBuilder()
+                    .setStyle(Discord.ButtonStyle.Secondary)
                     .setLabel('Open survey')
                     .setCustomId('guild_leave_feedback')
-                let row = new Discord.MessageActionRow()
+                let row = new Discord.ActionRowBuilder()
                     .addComponents(button)
                 await member.send({message:`<@${memberId}>`, embeds:[embed], components:[row]})
             }

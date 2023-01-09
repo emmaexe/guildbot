@@ -1,8 +1,4 @@
 const Discord = require('discord.js')
-const {
-    MessageButton,
-    MessageActionRow
-} = require('discord.js');
 const config = require('../config.json')
 const pkg = require('../package.json')
 require('dotenv').config()
@@ -11,18 +7,16 @@ const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
 
 module.exports = {
     async execute(client, interaction) {
-        let buttonFoward = new Discord.MessageButton()
-            .setStyle(2)
+        let buttonFoward = new Discord.ButtonBuilder()
+            .setStyle(Discord.ButtonStyle.Secondary)
             .setEmoji(config.emoji.arrowRight)
-            .setLabel('')
             .setCustomId('help_menu_1')
-        let buttonBackwards = new Discord.MessageButton()
-            .setStyle(2)
+        let buttonBackwards = new Discord.ButtonBuilder()
+            .setStyle(Discord.ButtonStyle.Secondary)
             .setEmoji(config.emoji.arrowLeft)
-            .setLabel('')
             .setCustomId('help_menu_backwards')
             .setDisabled(true)
-        let row = new Discord.MessageActionRow()
+        let row = new Discord.ActionRowBuilder()
             .addComponents(buttonBackwards, buttonFoward)
         let totalSeconds = (client.uptime / 1000);
         let days = Math.floor(totalSeconds / 86400);
@@ -39,32 +33,31 @@ module.exports = {
             let countButtons = res.find(obj => obj.sid === 'countButtons'); if (countButtons==null) {countButtons = 0} else {countButtons = countButtons.value};
             let countSelectMenu = res.find(obj => obj.sid === 'countSelectMenu'); if (countSelectMenu==null) {countSelectMenu = 0} else {countSelectMenu = countSelectMenu.value};
             let countGuildApplications = res.find(obj => obj.sid === 'countGuildApplications'); if (countGuildApplications==null) {countGuildApplications = 0} else {countGuildApplications = countGuildApplications.value};
-            const embed = new Discord.MessageEmbed()
+            const embed = new Discord.EmbedBuilder()
                 .setColor(config.colours.secondary)
                 .setTimestamp()
                 .setTitle(`**GuildBot v${pkg.version}**`)
-                .addField("Uptime", `:clock2: ${days}d ${hours}h ${minutes}m ${seconds}s`, true)
-                .addField("Servers", `:shield: ${client.guilds.cache.size}`, true)
-                .addField("Channels", `:file_folder: ${client.channels.cache.size}`, true)
-                .addField("Users", `:bust_in_silhouette: ${client.users.cache.size}`, true)
-                .addField("Emoji", `${config.emoji.helpEmoji} ${client.emojis.cache.size}`, true)
-                .addField("Commands ran", `${config.emoji.helpCommands} ${countCommands}`, true)
-                .addField("Buttons pressed", `${config.emoji.helpButtons} ${countButtons}`, true)
-                .addField("Select menu's used", `${config.emoji.helpMenus} ${countSelectMenu}`, true)
-                .addField("Guild Applications Submitted", `:pencil: ${countGuildApplications}`, true)
-                .addField("Bot repository", `${config.emoji.github} [**GitHub**](${pkg.repository.url})`, true)
-                .addField("Bot library", "[**Discord.js v13**](https://discord.js.org/#/docs/main/)", true)
-                .addField("Bot support server", `${config.emoji.discord} [**Invite link**](${pkg.supportServer})`, true)
-                .addField("Created on", `${client.user.createdAt}`)
+                .addFields([
+                    {name: "Uptime", value: `:clock2: ${days}d ${hours}h ${minutes}m ${seconds}s`, inline: true},
+                    {name: "Servers", value: `:shield: ${client.guilds.cache.size}`, inline: true}  ,
+                    {name: "Channels", value: `:file_folder: ${client.channels.cache.size}`, inline: true},
+                    {name: "Users", value: `:bust_in_silhouette: ${client.users.cache.size}`, inline: true},
+                    {name: "Emoji", value: `${config.emoji.helpEmoji} ${client.emojis.cache.size}`, inline: true},
+                    {name: "Commands ran", value: `${config.emoji.helpCommands} ${countCommands}`, inline: true},
+                    {name: "Buttons pressed", value: `${config.emoji.helpButtons} ${countButtons}`, inline: true},
+                    {name: "Select menu's used", value: `${config.emoji.helpMenus} ${countSelectMenu}`, inline: true},
+                    {name: "Guild Applications Submitted", value: `:pencil: ${countGuildApplications}`, inline: true},
+                    {name: "Bot repository", value: `${config.emoji.github} [**GitHub**](${pkg.repository.url})`, inline: true},
+                    {name: "Bot library", value: "[**Discord.js v13**](https://discord.js.org/#/docs/main/)", inline: true},
+                    {name: "Bot support server", value: `${config.emoji.discord} [**Invite link**](${pkg.supportServer})`, inline: true},
+                    {name: "Created on", value: `${client.user.createdAt}`}
+                ])
                 .setThumbnail(client.user.displayAvatarURL())
                 .setFooter({text: 'Developed by @emmaexe#0859'})
-            if (!interaction.guild.roles.everyone.permissions.has(Discord.Permissions.FLAGS.USE_EXTERNAL_EMOJIS)) {
-                if (!interaction.channel.permissionsFor(interaction.guild.roles.everyone).has(Discord.Permissions.FLAGS.USE_EXTERNAL_EMOJIS)) {
-                    embed.addField(':warning: External emoji could not be displayed!', 'For external emoji to be displayed properly within slash commands, the @everyone role in your server needs to have the "Use External Emoji" permission.')    
+            if (!interaction.guild.roles.everyone.permissions.has(Discord.PermissionsBitField.Flags.UseExternalEmojis)) {
+                if (!interaction.channel.permissionsFor(interaction.guild.roles.everyone).has(Discord.PermissionsBitField.Flags.UseExternalEmojis)) {
+                    embed.addFields([{name: ':warning: External emoji could not be displayed!', value: 'For external emoji to be displayed properly within slash commands, the @everyone role in your server needs to have the "Use External Emoji" permission.'}])
                 }
-            }
-            if (!interaction.channel.permissionsFor(interaction.guild.roles.everyone).serialize().USE_EXTERNAL_EMOJIS && interaction.guild.roles.everyone.permissions.has(Discord.Permissions.FLAGS.USE_EXTERNAL_EMOJIS)) {
-                embed.addField(':warning: External emoji could not be displayed!', 'For external emoji to be displayed properly within slash commands, the @everyone role in your server needs to have the "Use External Emoji" permission.')    
             }
             interaction.update({
                 embeds: [embed],

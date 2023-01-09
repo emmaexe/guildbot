@@ -1,4 +1,3 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js')
 const config = require('../config.json')
 const functions = require('../functions.js')
@@ -8,7 +7,7 @@ const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
 
 module.exports = {
     help: true,
-    data: new SlashCommandBuilder()
+    data: new Discord.SlashCommandBuilder()
         .setName('away')
         .setDescription(`View/set your away status. (Indicates whether you are away on e.g. vacation)`)
         .addSubcommand(command => command
@@ -68,14 +67,14 @@ module.exports = {
                 } else if (!away) {
                     awayText = "This user is **not away**.";
                 }
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setTitle(`Away status for **@${target.tag}**`)
                     .setThumbnail(target.displayAvatarURL())
                     .setTimestamp()
                     .setColor(config.colours.main)
-                    .addField(`**Away status**`, `${awayText}`)
+                    .addFields([{name: `**Away status**`, value: `${awayText}`}])
                 if (reason) {
-                    embed.addField(`**Reason**`, `${reason}`)
+                    embed.addFields([{name: `**Reason**`, value: `${reason}`}])
                 }
                 await interaction.editReply({embeds: [embed]})
                 await MongoClient.close()

@@ -1,6 +1,3 @@
-const {
-    SlashCommandBuilder
-} = require('@discordjs/builders');
 const Discord = require('discord.js')
 const config = require('../config.json')
 require('dotenv').config()
@@ -10,7 +7,7 @@ const functions = require('../functions.js')
 
 module.exports = {
     help: false,
-    data: new SlashCommandBuilder()
+    data: new Discord.SlashCommandBuilder()
         .setName('emit')
         .setDescription(`Emit an event.`)
         .addSubcommand(command => command
@@ -53,27 +50,27 @@ module.exports = {
                     })
                 } else {
                     let member = await interaction.guild.members.fetch(discordUser)
-                    const logembed = new Discord.MessageEmbed()
+                    const logembed = new Discord.EmbedBuilder()
                         .setColor(config.colours.secondary)
                         .setTimestamp()
-                        .setAuthor(member.user.tag)
+                        .setTitle(member.user.tag)
                         .setThumbnail(member.user.displayAvatarURL())
-                        .addField('**Forced application**', `**Administrator:** ${interaction.user.tag}\n**User:** ${member.user.tag}\n**User's IGN:** ${inGameName}`)
+                        .addFields([{name: '**Forced application**', value: `**Administrator:** ${interaction.user.tag}\n**User:** ${member.user.tag}\n**User's IGN:** ${inGameName}`}])
                     channel = await client.channels.fetch(config.channels.appChannelId)
                     await channel.send({
                         embeds: [logembed]
                     })
 
-                    const queueembed = new Discord.MessageEmbed()
+                    const queueembed = new Discord.EmbedBuilder()
                         .setColor(config.colours.secondary)
                         .setTimestamp()
-                        .addField(`**${inGameName}**`, `\`\`/g invite ${inGameName}\`\``)
-                    let deletebutton = new Discord.MessageButton()
-                        .setStyle(4)
+                        .addFields([{name: `**${inGameName}**`, value: `\`\`/g invite ${inGameName}\`\``}])
+                    let deletebutton = new Discord.ButtonBuilder()
+                        .setStyle(Discord.ButtonStyle.Danger)
                         //.setEmoji('885607339854528593')
                         .setLabel('Invite sent -> Delete from queue')
                         .setCustomId('delete_message')
-                    let row = new Discord.MessageActionRow()
+                    let row = new Discord.ActionRowBuilder()
                         .addComponents(deletebutton)
                     queuechannel = await client.channels.fetch(config.channels.queueChannelId)
                     await queuechannel.send({
@@ -82,11 +79,13 @@ module.exports = {
                     })
                     member.roles.add(config.roles.guildMemberRole)
                     functions.statistics.increaseGuildApplicationCount()
-                    let sucessembed = new Discord.MessageEmbed()
+                    let sucessembed = new Discord.EmbedBuilder()
                         .setColor(config.colours.main)
                         .setTimestamp()
-                        .addField('Your application was forcefully accepted.', 'Your application was accepted by an administrator. All requirement checks were bypassed.')
-                        .addField(`${config.emoji.log} Warning:`, "Make sure to leave your current guild if you are in one, or we will not be able to send you an invitation.\nMake sure your guild invites are turned **on** in your privacy settings. You can view the settings inside the profile menu (Right click your head in slot 2 of your hotbar) from any lobby on the hypixel network.")
+                        .addFields([
+                            {name: 'Your application was forcefully accepted.', value: 'Your application was accepted by an administrator. All requirement checks were bypassed.'},
+                            {name: `${config.emoji.log} Warning:`, value: "Make sure to leave your current guild if you are in one, or we will not be able to send you an invitation.\nMake sure your guild invites are turned **on** in your privacy settings. You can view the settings inside the profile menu (Right click your head in slot 2 of your hotbar) from any lobby on the hypixel network."}
+                        ])
                     await interaction.channel.send({
                         embeds: [sucessembed],
                         components: []

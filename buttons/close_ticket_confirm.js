@@ -11,16 +11,18 @@ module.exports = {
             const transcript = await transcripts.createTranscript(channel)
             await channel.delete(`Ticket closed by ${interaction.user.tag} [${interaction.user.id}].`)
             await interaction.guild.channels.fetch(config.channels.logChannelId).then(async logchannel => {
-                let logembed = new Discord.MessageEmbed()
+                let logembed = new Discord.EmbedBuilder()
                     .setTitle(`${config.emoji.log} LOG\n\nTicket Closed`)
                     .setThumbnail(interaction.user.avatarURL())
                     .setColor(config.colours.main)
-                    .addField('**Ticket # ID: **', `${ticket.numid}`)
-                    .addField('**Ticket opened by: **', `<@${ticket.user_id}> [${ticket.user_id}]`)
-                    .addField(`**Ticket closed by:** `, `<@${interaction.user.id}> [${interaction.user.id}]`)
-                    .addField('**Ticket opened on: **', `<t:${Math.round((await functions.getTimestampFromID(channel.id))/1000)}> [<t:${Math.round((await functions.getTimestampFromID(channel.id))/1000)}:R>]`)
-                    .addField('**Ticket opened for reason: **', `${ticket.reason}`)
-                    .addField('**Ticket channel: **', `<#${ticket.channel_id}> [${ticket.channel_id}]`)
+                    .addFields([
+                        {name: '**Ticket # ID: **', value:`${ticket.numid}`},
+                        {name: '**Ticket opened by: **', value: `<@${ticket.user_id}> [${ticket.user_id}]`},
+                        {name: `**Ticket closed by:** `, value: `<@${interaction.user.id}> [${interaction.user.id}]`},
+                        {name: '**Ticket opened on: **', value: `<t:${Math.round((await functions.getTimestampFromID(channel.id))/1000)}> [<t:${Math.round((await functions.getTimestampFromID(channel.id))/1000)}:R>]`},
+                        {name: '**Ticket opened for reason: **', value: `${ticket.reason}`},
+                        {name: '**Ticket channel: **', value: `<#${ticket.channel_id}> [${ticket.channel_id}]`}
+                    ])
                     .setTimestamp()
                 if (config.tickets.ticketTranscript) {
                     logchannel.send({embeds:[logembed], files:[transcript]})

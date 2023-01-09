@@ -5,10 +5,10 @@ const functions = require('../functions.js')
 module.exports = {
     async execute(client, interaction) {
         let cshort = config.modals.guildLeaveFeedback.shortQuestion, clong = config.modals.guildLeaveFeedback.longQuestion;
-        let modal = new Discord.Modal()
+        let modal = new Discord.ModalBuilder()
             .setCustomId("guildLeaveFeedback")
             .setTitle("Guild leave feedback.")
-        let textInputShort = new Discord.TextInputComponent(), textInputLong = new Discord.TextInputComponent(), rowShort = new Discord.MessageActionRow(), rowLong = new Discord.MessageActionRow();
+        let textInputShort = new Discord.TextInputBuilder(), textInputLong = new Discord.TextInputBuilder(), rowShort = new Discord.ActionRowBuilder(), rowLong = new Discord.ActionRowBuilder();
         if (cshort.enabled) {
             textInputShort
                 .setCustomId("textinputshort")
@@ -16,7 +16,7 @@ module.exports = {
                 .setPlaceholder(cshort.placeholder)
                 .setMinLength(cshort.minLength)
                 .setMaxLength(cshort.maxLength)
-                .setStyle(1)
+                .setStyle(Discord.TextInputStyle.Short)
             rowShort.addComponents(textInputShort)
             modal.addComponents(rowShort)
         }
@@ -27,7 +27,7 @@ module.exports = {
                 .setPlaceholder(clong.placeholder)
                 .setMinLength(clong.minLength)
                 .setMaxLength(clong.maxLength)
-                .setStyle(2)
+                .setStyle(Discord.TextInputStyle.Paragraph)
             rowLong.addComponents(textInputLong)
             modal.addComponents(rowLong)
         }

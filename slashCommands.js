@@ -1,8 +1,7 @@
 require('dotenv').config()
 module.exports.deploy = async (client, clientId, guildId) => {
     const fs = require('fs');
-    const { REST } = require('@discordjs/rest');
-    const { Routes } = require('discord-api-types/v9');
+    const { REST, Routes } = require('discord.js');
     const token = process.env.TOKEN
     
     const commands = [];

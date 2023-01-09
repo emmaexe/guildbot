@@ -1,6 +1,3 @@
-const {
-    SlashCommandBuilder
-} = require('@discordjs/builders');
 const Discord = require('discord.js')
 const config = require('../config.json')
 const fetch = require('node-fetch')
@@ -11,7 +8,7 @@ const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
 module.exports = {
     help: true,
     cooldown: 2000,
-    data: new SlashCommandBuilder()
+    data: new Discord.SlashCommandBuilder()
         .setName('guild')
         .setDescription(`Access data about the guild and its members.`)
         .addSubcommand(subcommand => subcommand
@@ -90,24 +87,26 @@ module.exports = {
                             } else if (data.player.newPackageRank == "MVP") {
                                 rank = "MVP"
                             }
-                            let embed = new Discord.MessageEmbed()
+                            let embed = new Discord.EmbedBuilder()
                                 .setColor(config.colours.main)
                                 .setTimestamp()
                                 .setTitle(`**${rank}** ${inGameName} - Guild member data`)
                                 .setFooter({text: `uuid: ${member.uuid}`})
-                                .addField("Rank", `${member.rank}`)
-                                .addField("Joined guild", `${new Date(member.joined)}`)
-                                .addField("Exp history", dateField)
-                            let memberButton = new Discord.MessageButton()
-                                .setStyle(2)
+                                .addFields([
+                                    {name: "Rank", value: `${member.rank}`},
+                                    {name: "Joined guild", value: `${new Date(member.joined)}`},
+                                    {name: "Exp history", value: dateField}
+                                ])
+                            let memberButton = new Discord.ButtonBuilder()
+                                .setStyle(Discord.ButtonStyle.Secondary)
                                 .setLabel('Guild member data')
                                 .setCustomId('guildcommand_member')
                                 .setDisabled(true)
-                            let userButton = new Discord.MessageButton()
-                                .setStyle(2)
+                            let userButton = new Discord.ButtonBuilder()
+                                .setStyle(Discord.ButtonStyle.Secondary)
                                 .setLabel('User data')
                                 .setCustomId('guildcommand_user')
-                            let row = new Discord.MessageActionRow()
+                            let row = new Discord.ActionRowBuilder()
                                 .addComponents(memberButton, userButton)
                             interaction.reply({
                                 content: `||{"uuid":"${member.uuid}","tag":"${discordUser.tag}"}||`,
@@ -131,7 +130,7 @@ module.exports = {
             arrData.sort(function (a, b) {
                 return b[1].total - a[1].total;
             });
-            let embed = new Discord.MessageEmbed()
+            let embed = new Discord.EmbedBuilder()
                 .setTimestamp()
                 .setColor(config.colours.main)
                 .setTitle("Weekly guild exp leaderboard")
@@ -139,7 +138,7 @@ module.exports = {
             if (arrData.length < 5) ti = arrData.length
             for (let i = 0; i < ti; i++) {
                 let userData = arrData[i];
-                embed.addField(`*#${i+1}* **${userData[1].rankName}** ${userData[0]}`, `Total: *${userData[1].total.toLocaleString("en")} exp*\nAverage daily: *${((Math.floor(userData[1].avg*100))/100).toLocaleString("en")} exp*`)
+                embed.addFields([{name: `*#${i+1}* **${userData[1].rankName}** ${userData[0]}`, value: `Total: *${userData[1].total.toLocaleString("en")} exp*\nAverage daily: *${((Math.floor(userData[1].avg*100))/100).toLocaleString("en")} exp*`}])
             }
             interaction.editReply({
                 embeds: [embed],
@@ -207,7 +206,7 @@ module.exports = {
             mostPlayed.sort(function (a, b) {
                 return b[1] - a[1];
             });
-            mostPlayedStr = ""
+            let mostPlayedStr = ""
             for (let i = 0; i < 10; i++) {
                 mostPlayedStr += capitalizeWords(mostPlayed[i][0].replace("_", " "))
                 if (i != 9) {
@@ -216,19 +215,21 @@ module.exports = {
             }
             let gtag = ""
             if (data.guild.tag) gtag = `**[${data.guild.tag}]** `
-            let embed = new Discord.MessageEmbed()
+            let embed = new Discord.EmbedBuilder()
                 .setTitle(`${gtag}${data.guild.name}`)
                 .setFooter({text: `uuid: ${data.guild._id}`})
                 .setTimestamp()
                 .setColor(config.colours.main)
-                .addField(`Created on:`, `${new Date(data.guild.created)}`)
-                .addField(`Guild level:`, `${level}`)
-                .addField(`Guild members:`, `${data.guild.members.length}`)
-                .addField(`Guild coins:`, `${data.guild.coins.toLocaleString("en")} coins\n(Max ${data.guild.coinsEver.toLocaleString("en")})`)
-                .addField(`Description:`, `${data.guild.description}`)
-                .addField(`Publicly listed / Joinable:`, `${publiclyListed} / ${joinable}`)
-                .addField(`Preferred games:`, `${games}`)
-                .addField(`Top 10 most played games:`, `${mostPlayedStr}`)
+                .addFields([
+                    {name: `Created on:`, value: `${new Date(data.guild.created)}`},
+                    {name: `Guild level:`, value: `${level}`},
+                    {name: `Guild members:`, value: `${data.guild.members.length}`},
+                    {name: `Guild coins:`, value: `${data.guild.coins.toLocaleString("en")} coins\n(Max ${data.guild.coinsEver.toLocaleString("en")})`},
+                    {name: `Description:`, value: `${data.guild.description}`},
+                    {name: `Publicly listed / Joinable:`, value: `${publiclyListed} / ${joinable}`},
+                    {name: `Preferred games:`, value: `${games}`},
+                    {name: `Top 10 most played games:`, value: `${mostPlayedStr}`}
+                ])
             interaction.reply({
                 embeds: [embed]
             })

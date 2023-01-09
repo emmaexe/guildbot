@@ -1,4 +1,3 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js')
 const config = require('../config.json')
 const functions = require('../functions.js')
@@ -8,7 +7,7 @@ const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
 if (config.tickets.enabled) {
     module.exports = {
         help: false,
-        data: new SlashCommandBuilder()
+        data: new Discord.SlashCommandBuilder()
             .setName('ticket')
             .setDescription(`Manage the ticket you are currently viewing. Only works in ticket channels.`)
             .addSubcommand(command => command
@@ -34,13 +33,15 @@ if (config.tickets.enabled) {
                 db.collection('tickets').findOne({ sid: "ticket", channel_id: channel.id }, async function(err, ticket) {
                     if (err) throw err;
                     if (ticket != undefined) {
-                        let embed = new Discord.MessageEmbed()
+                        let embed = new Discord.EmbedBuilder()
                             .setTitle('Ticket info')
-                            .addField('**Ticket # ID: **', `${ticket.numid}`)
-                            .addField('**Ticket opened by: **', `<@${ticket.user_id}> [${ticket.user_id}]`)
-                            .addField('**Ticket opened on: **', `<t:${Math.round((await functions.getTimestampFromID(channel.id))/1000)}> [<t:${Math.round((await functions.getTimestampFromID(channel.id))/1000)}:R>]`)
-                            .addField('**Ticket opened for reason: **', `${ticket.reason}`)
-                            .addField('**Ticket channel: **', `<#${ticket.channel_id}> [${ticket.channel_id}]`)
+                            .addFields([
+                                {name: '**Ticket # ID: **', value: `${ticket.numid}`},
+                                {name: '**Ticket opened by: **', value: `<@${ticket.user_id}> [${ticket.user_id}]`},
+                                {name: '**Ticket opened on: **', value: `<t:${Math.round((await functions.getTimestampFromID(channel.id))/1000)}> [<t:${Math.round((await functions.getTimestampFromID(channel.id))/1000)}:R>]`},
+                                {name: '**Ticket opened for reason: **', value: `${ticket.reason}`},
+                                {name: '**Ticket channel: **', value: `<#${ticket.channel_id}> [${ticket.channel_id}]`}
+                            ])
                             .setColor(config.colours.main)
                             .setTimestamp()
                         await interaction.reply({embeds: [embed], ephemeral: ephemeral})
@@ -50,9 +51,9 @@ if (config.tickets.enabled) {
                     }
                 })
             } else if (interaction.options.getSubcommand() == 'close') {
-                let row = new Discord.MessageActionRow()
-                let button = new Discord.MessageButton()
-                    .setStyle(4)
+                let row = new Discord.ActionRowBuilder()
+                let button = new Discord.ButtonBuilder()
+                    .setStyle(Discord.ButtonStyle.Danger)
                     .setEmoji('🔒')
                     .setLabel('Close ticket')
                     .setCustomId('close_ticket_confirm')

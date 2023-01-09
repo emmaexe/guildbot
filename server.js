@@ -8,16 +8,9 @@ const schedule = require('node-schedule');
 const fetch = require('node-fetch')
 const mineflayer = require('mineflayer')
 const Discord = require("discord.js")
-const allIntents = new Discord.Intents(32767); const client = new Discord.Client({ intents: allIntents }); //Uses all intents. The bot runs in a single server so it does not matter.
+const client = new Discord.Client({ intents: 3260415 });
 const config = require('./config.json')
 const mineflayerconfig = functions.mineflayerConfig()
-client.on('error', async (err) => {
-    const channel = await client.channels.cache.get(config.channels.logChannelId)
-    const embed = new Discord.MessageEmbed()
-        .setTitle(`${config.emoji.error} A DiscordAPIError has occurred.`)
-        .addField('**Cause: **', `\`\`${err.message}\`\``)
-    channel.send({embeds:[embed]})
-})
 
 //client.on('debug', async (debug) => {console.info(debug)}) //Uncomment for debugging.
 
@@ -52,7 +45,7 @@ client.on('interactionCreate', async (interaction) => {
         } catch (err) {
             return console.error(err);
         }
-    } else if (interaction.isSelectMenu()) {
+    } else if (interaction.isStringSelectMenu()) {
         functions.statistics.increaseSelectMenuCount()
         try {
             let interactionFile = require(`./select-menus-handler.js`);
@@ -174,8 +167,9 @@ client.on('messageReactionAdd', async (messageReaction, user) => {
     message = messageReaction.message;
     if (messageReaction.emoji.name == "⭐" && message.guild.id == config.discordGuildId && message.author.id != client.user.id && messageReaction.count >= config.starboard.minimumCount) {
         message.react(`${config.emoji.star}`)
-        let embed = new Discord.MessageEmbed()
-            .setAuthor(message.author.tag.toString(), message.author.displayAvatarURL())
+        let embed = new Discord.EmbedBuilder()
+            .setTitle(message.author.tag)
+            .setThumbnail(message.author.displayAvatarURL())
             .setFooter({text: `${messageReaction.count}⭐`})
             .setTimestamp()
         desc = `**[Jump to message](https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id})**\n`
@@ -194,22 +188,22 @@ client.on('messageReactionAdd', async (messageReaction, user) => {
             if (res == undefined) {
                 let starboard = await client.channels.fetch(config.channels.starboardChannelId)
                 await starboard.send({embeds: [embed]}).then(async (msg) => {
-                    await db.collection('starboard').insertOne({messageid: message.id, starboardid: msg.id}, function(err, res) {
+                    db.collection('starboard').insertOne({messageid: message.id, starboardid: msg.id}, async function(err, res) {
                         if (err) throw err;
+                        await MongoClient.close()
                     })
                 })
             } else {
                 let starboard = await client.channels.fetch(config.channels.starboardChannelId)
                 try {
-                    starboard.messages.fetch(res.starboardid).then(async (message) => {
+                    starboard.messages.fetch({message: res.starboardid}).then(async (message) => {
                         message.edit({embeds: [embed]})
                     })
                 } catch (err) {
                     console.error(err)
                 }
-                
+                await MongoClient.close()   
             }
-            MongoClient.close()
         })
     }
 })
@@ -217,8 +211,9 @@ client.on('messageReactionAdd', async (messageReaction, user) => {
 client.on('messageReactionRemove', async (messageReaction, user) => {
     message = messageReaction.message;
     if (messageReaction.emoji.name == "⭐" && message.guild.id == config.discordGuildId && message.author.id != client.user.id && messageReaction.count >= config.starboard.minimumCount) {
-        let embed = new Discord.MessageEmbed()
-            .setAuthor(message.author.tag.toString(), message.author.displayAvatarURL())
+        let embed = new Discord.EmbedBuilder()
+            .setTitle(message.author.tag)
+            .setThumbnail(message.author.displayAvatarURL())
             .setFooter({text: `${messageReaction.count}⭐`})
             .setTimestamp()
         desc = `**[Jump to message](https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id})**\n`
@@ -238,23 +233,22 @@ client.on('messageReactionRemove', async (messageReaction, user) => {
             if (res == undefined) {
                 let starboard = await client.channels.fetch(config.channels.starboardChannelId)
                 await starboard.send({embeds: [embed]}).then(async (msg) => {
-                    await db.collection('starboard').insertOne({messageid: message.id, starboardid: msg.id}, function(err, res) {
+                    db.collection('starboard').insertOne({messageid: message.id, starboardid: msg.id}, async function(err, res) {
                         if (err) throw err;
-                        
+                        await MongoClient.close()
                     })
                 })
             } else {
                 let starboard = await client.channels.fetch(config.channels.starboardChannelId)
                 try {
-                    starboard.messages.fetch(res.starboardid).then(async (message) => {
+                    starboard.messages.fetch({message: res.starboardid}).then(async (message) => {
                         message.edit({embeds: [embed]})
                     })
                 } catch (err) {
                     console.error(err)
                 }
-                
+                await MongoClient.close()   
             }
-            MongoClient.close()
         })
     }
 })
@@ -274,13 +268,13 @@ if (config.chatbridge.enabled) {
         })
         mclient.on('login', () => {
             client.channels.fetch(config.channels.logChannelId).then(channel => {
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setColor(config.colours.success)
                     .setTimestamp()
                     .setTitle(`${config.emoji.log} LOG`)
-                    .addField('ChatBridge - Connection Successfull', `Successfully logged in to hypixel as **${mclient.username}**.`)
+                    .addFields([{name: 'ChatBridge - Connection Successfull', value: `Successfully logged in to hypixel as **${mclient.username}**.`}])
                 if (config.chatbridge.relogOnKick.enabled) {
-                    embed.addField(`Remaining re-login attempts`, `Remaining attempts of logging in after getting kicked: **${relogAmount}**`)//**${res.relogAmount}**`)
+                    embed.addFields([{name: `Remaining re-login attempts`, value: `Remaining attempts of logging in after getting kicked: **${relogAmount}**`}])//**${res.relogAmount}**`)
                     channel.send({embeds:[embed]})
                 } else {
                     channel.send({embeds:[embed]})
@@ -289,11 +283,11 @@ if (config.chatbridge.enabled) {
         })
         mclient.on('kicked', (reason, loggedIn) => {
             client.channels.fetch(config.channels.logChannelId).then(channel => {
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setColor(config.colours.success)
                     .setTimestamp()
                     .setTitle(`${config.emoji.log} LOG`)
-                    .addField('ChatBridge - Bot kicked', `ChatBridge bot **${mclient.username}** has been kicked from hypixel:\n**${reason}**`)
+                    .addFields([{name: 'ChatBridge - Bot kicked', value: `ChatBridge bot **${mclient.username}** has been kicked from hypixel:\n**${reason}**`}])
                 channel.send({embeds:[embed]})
             })
             if (config.chatbridge.relogOnKick.enabled) {
@@ -331,7 +325,7 @@ if (config.chatbridge.enabled) {
             let serverLeave = new RegExp('^Guild > ([a-z]|[A-Z]|[0-9]|_){3,16} left\.$')
             if (config.chatbridge.serverJoinLeaveMessages.enabled && serverJoin.test(message)) {
                 let name = message.slice(8, message.length-8)
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setColor("GREEN")
                     .setTitle(`**${name}** is now online.`)
                 let response = await fetch(`https://minecraft-api.com/api/uuid/${name}/json`)
@@ -344,7 +338,7 @@ if (config.chatbridge.enabled) {
                 })
             } else if (config.chatbridge.serverJoinLeaveMessages.enabled && serverLeave.test(message)) {
                 let name = message.slice(8, message.length-6)
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setColor("RED")
                     .setTitle(`**${name}** is now offline.`)
                 let response = await fetch(`https://minecraft-api.com/api/uuid/${name}/json`)
@@ -362,7 +356,7 @@ if (config.chatbridge.enabled) {
                 let response = await fetch(`https://minecraft-api.com/api/uuid/${name}/json`)
                 let namedata = {uuid: undefined};
                 try{namedata = await response.json()}catch(err){console.error}
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setColor(config.colours.secondary)
                     .setTitle(`**${name}** has left the guild!`)
                 chatbridgehook.send({
@@ -378,12 +372,12 @@ if (config.chatbridge.enabled) {
                     let uuid; if (namedata.uuid == undefined) {uuid = "*unavailable*"} else {uuid = namedata.uuid}
                     let discordId; if (res == undefined) {discordId = "*unavailable*"} else {discordId = res.discord_id}
                     let discordTag; if (res == undefined) {discordTag = "*unavailable*"} else {let user = await client.users.fetch(discordId); discordTag = user.tag}
-                    let logembed = new Discord.MessageEmbed()
+                    let logembed = new Discord.EmbedBuilder()
                         .setColor(config.colours.secondary)
                         .setTimestamp()
                         .setTitle(`${config.emoji.log} LOG`)
                         .setThumbnail(`https://crafatar.com/renders/head/${namedata.uuid}`)
-                        .addField(`**${name}** has **LEFT** the guild.`, `**Discord account tag:** ${discordTag}\n**Discord account ID:** ${discordId}\n**Minecraft account name:** ${name}\n**Minecraft account UUID:** ${uuid}\n`)
+                        .addFields([{name: `**${name}** has **LEFT** the guild.`, value: `**Discord account tag:** ${discordTag}\n**Discord account ID:** ${discordId}\n**Minecraft account name:** ${name}\n**Minecraft account UUID:** ${uuid}\n`}])
                     let logchannel = await client.channels.fetch(config.channels.logChannelId)
                     logchannel.send({embeds: [logembed]})
                 }
@@ -402,7 +396,7 @@ if (config.chatbridge.enabled) {
                 let response = await fetch(`https://minecraft-api.com/api/uuid/${name}/json`)
                 let namedata = {uuid: undefined};
                 try{namedata = await response.json()}catch(err){console.error}
-                let embed = new Discord.MessageEmbed()
+                let embed = new Discord.EmbedBuilder()
                     .setColor(config.colours.secondary)
                     .setTitle(`**${name}** has joined the guild!`)
                 chatbridgehook.send({
@@ -418,12 +412,12 @@ if (config.chatbridge.enabled) {
                     let uuid; if (namedata.uuid == undefined) {uuid = "*unavailable*"} else {uuid = namedata.uuid}
                     let discordId; if (res == undefined) {discordId = "*unavailable*"} else {discordId = res.discord_id}
                     let discordTag; if (res == undefined) {discordTag = "*unavailable*"} else {let user = await client.users.fetch(discordId); discordTag = user.tag}
-                    let logembed = new Discord.MessageEmbed()
+                    let logembed = new Discord.EmbedBuilder()
                         .setColor(config.colours.secondary)
                         .setTimestamp()
                         .setTitle(`${config.emoji.log} LOG`)
                         .setThumbnail(`https://crafatar.com/renders/head/${namedata.uuid}`)
-                        .addField(`**${name}** has **JOINED** the guild.`, `**Discord account tag:** ${discordTag}\n**Discord account ID:** ${discordId}\n**Minecraft account name:** ${name}\n**Minecraft account UUID:** ${uuid}\n`)
+                        .addFields([{name: `**${name}** has **JOINED** the guild.`, value: `**Discord account tag:** ${discordTag}\n**Discord account ID:** ${discordId}\n**Minecraft account name:** ${name}\n**Minecraft account UUID:** ${uuid}\n`}])
                     let logchannel = await client.channels.fetch(config.channels.logChannelId)
                     logchannel.send({embeds: [logembed]})
                 }

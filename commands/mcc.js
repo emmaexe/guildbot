@@ -1,6 +1,3 @@
-const {
-    SlashCommandBuilder
-} = require('@discordjs/builders');
 const Discord = require('discord.js')
 const config = require('../config.json')
 require('dotenv').config()
@@ -11,7 +8,7 @@ const server = require('../server.js')
 
 module.exports = {
     help: false,
-    data: new SlashCommandBuilder()
+    data: new Discord.SlashCommandBuilder()
         .setName('mcc')
         .setDescription(`Control your ChatBridge minecraft account from discord.`)
         .addSubcommand(command => command

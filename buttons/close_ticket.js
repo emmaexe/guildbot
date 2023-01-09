@@ -2,9 +2,9 @@ const Discord = require('discord.js')
 
 module.exports = {
     async execute(client, interaction) {
-        let row = new Discord.MessageActionRow()
-        let button = new Discord.MessageButton()
-            .setStyle(4)
+        let row = new Discord.ActionRowBuilder()
+        let button = new Discord.ButtonBuilder()
+            .setStyle(Discord.ButtonStyle.Danger)
             .setEmoji('🔒')
             .setLabel('Close ticket')
             .setCustomId('close_ticket_confirm')

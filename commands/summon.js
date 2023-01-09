@@ -1,4 +1,3 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js')
 const config = require('../config.json')
 const mongo = require('mongodb');
@@ -6,7 +5,7 @@ const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
 
 module.exports = {
     help: false,
-    data: new SlashCommandBuilder()
+    data: new Discord.SlashCommandBuilder()
         .setName('summon')
         .setDescription(`Summons an object.`)
         .addSubcommand(command => command
@@ -43,14 +42,14 @@ module.exports = {
     async execute(client, interaction) {
         if (interaction.options.getSubcommand() == 'menu') {
             let menuConfig = config.selectMenus.find(menu => menu.name === interaction.options.getString('object'));
-            const menu = new Discord.MessageSelectMenu()
+            const menu = new Discord.StringSelectMenuBuilder()
                 .setCustomId(menuConfig.name)
                 .setPlaceholder(menuConfig.placeholder)
                 .setOptions(menuConfig.options)
                 .setMaxValues(menuConfig.maxValues)
                 .setMinValues(menuConfig.minValues)
                 .setDisabled(menuConfig.disabled)
-            const row = new Discord.MessageActionRow()
+            const row = new Discord.ActionRowBuilder()
                 .addComponents(menu)
             interaction.channel.send({content: "​", components: [row]}) //ZERO-WIDTH SPACE
             interaction.reply({content: "Object summoned successfully.", ephemeral: true})
@@ -70,7 +69,7 @@ module.exports = {
                     totalSeconds %= 86400; totalSeconds %= 3600;
                     let minutes = Math.floor(totalSeconds / 60);
                     let seconds = Math.floor(totalSeconds % 60);
-                    let embed = new Discord.MessageEmbed()
+                    let embed = new Discord.EmbedBuilder()
                         .setTitle(`Kickwave calculation`)
                         .setColor(config.colours.secondary)
                         .setFooter({text: `Data last updated ${minutes}min ${seconds}sec ago.`})
@@ -85,7 +84,7 @@ module.exports = {
                     if (count > arrData.length) count = arrData.length;
                     for (let i = 0;i<count;i++) {
                         let userData = arrData[i];
-                        embed.addField(`**${userData[1].rankName}** - *${userData[0]}*`, `Total: *${userData[1].total.toLocaleString("en")} exp*\nAverage daily: *${((Math.floor(userData[1].avg*100))/100).toLocaleString("en")} exp*`, true)
+                        embed.addFields([{name: `**${userData[1].rankName}** - *${userData[0]}*`, value: `Total: *${userData[1].total.toLocaleString("en")} exp*\nAverage daily: *${((Math.floor(userData[1].avg*100))/100).toLocaleString("en")} exp*`, inline: true}])
                         if (i+1<count) {content+=`"${userData[0]}",\n`} else {content+=`"${userData[0]}"\n]`}
                     }
                     content+="\n```"
@@ -96,11 +95,11 @@ module.exports = {
             })
         } else if (interaction.options.getSubcommand() == 'ticket-button') {
             if (config.tickets.enabled) {
-                let button = new Discord.MessageButton()
-                    .setStyle(2)
+                let button = new Discord.ButtonBuilder()
+                    .setStyle(Discord.ButtonStyle.Secondary)
                     .setEmoji('🎫')
                     .setCustomId('open_ticket')
-                const row = new Discord.MessageActionRow()
+                const row = new Discord.ActionRowBuilder()
                     .addComponents(button)
                 interaction.channel.send({content: "​", components: [row]}) //ZERO-WIDTH SPACE
                 interaction.reply({content: "Object summoned successfully.", ephemeral: true})
