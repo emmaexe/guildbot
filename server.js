@@ -326,7 +326,7 @@ if (config.chatbridge.enabled) {
             if (config.chatbridge.serverJoinLeaveMessages.enabled && serverJoin.test(message)) {
                 let name = message.slice(8, message.length-8)
                 let embed = new Discord.EmbedBuilder()
-                    .setColor("GREEN")
+                    .setColor("Green")
                     .setTitle(`**${name}** is now online.`)
                 let response = await fetch(`https://minecraft-api.com/api/uuid/${name}/json`)
                 let namedata = {uuid: undefined};
@@ -339,7 +339,7 @@ if (config.chatbridge.enabled) {
             } else if (config.chatbridge.serverJoinLeaveMessages.enabled && serverLeave.test(message)) {
                 let name = message.slice(8, message.length-6)
                 let embed = new Discord.EmbedBuilder()
-                    .setColor("RED")
+                    .setColor("Red")
                     .setTitle(`**${name}** is now offline.`)
                 let response = await fetch(`https://minecraft-api.com/api/uuid/${name}/json`)
                 let namedata = {uuid: undefined};
