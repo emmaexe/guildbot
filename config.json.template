@@ -1,4 +1,8 @@
 {
+    "logs":{
+        "fancyLogs":BOOLEAN,
+        "djs-debugging":BOOLEAN
+    },
     "discordGuildId": DISCORDID,
     "hypixelGuildId": UUID,
     "colours": {

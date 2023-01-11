@@ -31,6 +31,10 @@ The **config.json** file is used for saving less sesitive configuration data.
 ```json
 
 {
+    "logs":{
+        "fancyLogs":BOOLEAN,
+        "djs-debugging":BOOLEAN
+    },
     "discordGuildId": DISCORDID,
     "hypixelGuildId": UUID,
     "colours": {
@@ -166,6 +170,12 @@ The **config.json** file is used for saving less sesitive configuration data.
 }
 
 ```
+
+**logs** contains configuration for the bot's logs
+
+- **fancyLogs** enables colour-coded logs and inserts a prefix containing the time of the log to each message.
+
+- **djsDebugging** enables and logs debugging events in discord.js which may provide additional info if you are having trouble logging in as your bot.
 
 **discordGuildId** is the ID of the discord server the bot operates in.
 

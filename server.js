@@ -1,18 +1,19 @@
-require('dotenv').config()
-const logging = require('./consoleFormatting.js'); logging.log(); logging.warn(); logging.error(); logging.info(); //console.log('log'); console.warn('warn'); console.error('error'); console.info('info'); //For testing
+require('dotenv').config();
 const fs = require('fs');
-const mongo = require('mongodb')
-const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
-const functions = require('./functions.js')
+const mongo = require('mongodb');
+const MongoClient = new mongo.MongoClient(process.env.MONGO_URL);
+const functions = require('./functions.js');
 const schedule = require('node-schedule');
-const fetch = require('node-fetch')
-const mineflayer = require('mineflayer')
-const Discord = require("discord.js")
+const fetch = require('node-fetch');
+const mineflayer = require('mineflayer');
+const Discord = require("discord.js");
 const client = new Discord.Client({ intents: 3260415 });
-const config = require('./config.json')
-const mineflayerconfig = functions.mineflayerConfig()
+const config = require('./config.json');
+const mineflayerconfig = functions.mineflayerConfig();
 
-//client.on('debug', async (debug) => {console.info(debug)}) //Uncomment for debugging.
+const logging = require('./consoleFormatting.js');
+if (config.logs.fancyLogs) { logging.log(); logging.warn(); logging.error(); logging.info(); }
+if (config.logs.djsDebugging) { client.on('debug', async (debug) => {console.info(debug)}); }
 
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
