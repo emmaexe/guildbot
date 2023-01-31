@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const fetch = require('node-fetch')
-require('dotenv').config()
-const config = require('../config.json')
+require('dotenv').config({ path: '../config/.env' });
+const config = require('../config/config.json')
 
 module.exports = {
     async execute(client, interaction) {

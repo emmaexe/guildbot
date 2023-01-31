@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config({ path: './config/.env' });
 module.exports.deploy = async (client, clientId, guildId) => {
     const fs = require('fs');
     const { REST, Routes } = require('discord.js');

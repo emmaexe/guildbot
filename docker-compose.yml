@@ -1,0 +1,7 @@
+services:
+  guildbot:
+    container_name: guildbot
+    image: guildbot:latest
+    network_mode: host
+    volumes:
+      - CONFIG_PATH_ON_YOUR_COMPUTER:/app/config:rw

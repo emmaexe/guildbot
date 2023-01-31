@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: './config/.env' });
 const fs = require('fs');
 const mongo = require('mongodb');
 const MongoClient = new mongo.MongoClient(process.env.MONGO_URL);
@@ -8,7 +8,7 @@ const fetch = require('node-fetch');
 const mineflayer = require('mineflayer');
 const Discord = require("discord.js");
 const client = new Discord.Client({ intents: 3260415 });
-const config = require('./config.json');
+const config = require('./config/config.json');
 const mineflayerconfig = functions.mineflayerConfig();
 
 const logging = require('./consoleFormatting.js');

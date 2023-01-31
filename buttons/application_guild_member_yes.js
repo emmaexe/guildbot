@@ -1,9 +1,9 @@
 const Discord = require('discord.js')
-require('dotenv').config()
+require('dotenv').config({ path: '../config/.env' });
 const fetch = require('node-fetch')
 const mongo = require('mongodb')
 const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
-const config = require('../config.json')
+const config = require('../config/config.json')
 const functions = require('../functions.js')
 const server = require('../server.js')
 

@@ -3,7 +3,7 @@
 
 const readline = require("readline");
 const rl = readline.createInterface({input: process.stdin, output: process.stdout });
-require('dotenv').config()
+require('dotenv').config({ path: './config/.env' })
 const fetch = require('node-fetch')
 
 rl.question("Enter the guild name: ", async function(name) {

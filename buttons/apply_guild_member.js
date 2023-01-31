@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
-const config = require('../config.json')
-require('dotenv').config()
+const config = require('../config/config.json')
+require('dotenv').config({ path: '../config/.env' });
 const mongo = require('mongodb')
 const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
 

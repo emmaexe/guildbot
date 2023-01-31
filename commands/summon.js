@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const config = require('../config.json')
+const config = require('../config/config.json')
 const mongo = require('mongodb');
 const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
 

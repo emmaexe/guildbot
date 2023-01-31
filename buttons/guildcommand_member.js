@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
 const fetch = require('node-fetch')
-const config = require('../config.json')
+const config = require('../config/config.json')
 
 module.exports = {
     async execute(client, interaction) {

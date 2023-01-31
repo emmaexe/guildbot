@@ -1,8 +1,5 @@
 const Discord = require('discord.js')
-const config = require('../config.json')
-require('dotenv').config()
-const mongo = require('mongodb')
-const MongoClient = new mongo.MongoClient(process.env.MONGO_URL)
+const config = require('../config/config.json')
 
 module.exports = {
     async execute(client, interaction) {
