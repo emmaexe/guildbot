@@ -1,22 +1,32 @@
-<h1 align="center">Setting the bot up</h1>
+<h1 align="center"><b>Setting the bot up</b></h1>
 
-## Enviromental variables
+# **Before you begin**
 
-Enviromental variables are used for saving sensitive data (e.g. your discord token).
+## **From-source installs**
 
-To handle enviromental variables the project uses the [dotenv](https://www.npmjs.com/package/dotenv) npm package.
+Users who chose to install from source need to manually create a `config` directory, copy the `.env.template` and `config.json.template` into it from the `config-template` directory and rename them to `.env` and `config.json`.
 
-You must create a ".env" file in the root of the project and create all the necessary variables for the bot to function.
+## **Docker installs**
 
-You can find more info on how to do that [here](https://www.npmjs.com/package/dotenv).
+Users who installed via docker only need to define the config directory path under volumes in their `docker-compose.yml` file. After starting the container for the first time the config folder aswell as the config.json and .env files will be auto-generated. After they are created navigate to the directory you specified in `docker-compose.yml` and you will find them there.
+
+# **Setting up**
+
+## Environmental variables
+
+Environmental variables are used for saving sensitive data (e.g. your discord token).
+
+To handle environmental variables the project uses the [dotenv](https://www.npmjs.com/package/dotenv) npm package.
+
+You can find more info on how the .env file works [here](https://www.npmjs.com/package/dotenv).
 
 Variables that must be created in order for the bot to function:
 
 **"TOKEN"** - contains your discord bot's token.
 
-**"APIKEY"** - contains your hypixel API key. To get/reset your api key, use the "/api new" command anywhere on the hypixel network.
+**"APIKEY"** - contains your hypixel API key. To get/reset your api key, use the `/api new` command anywhere on the hypixel network.
 
-**"MONGO_URL"** - contains the URL of your MongoDB server. You must include the database name after the URL so the project knows where to save data (e.g. mongodb://localhost:27017/guildbot; mongodb://localhost:27017/ being the URL and guildbot the database name.)
+**"MONGO_URL"** - contains the URL of your MongoDB server. You must include the database name after the URL so the project knows where to save data (e.g. `mongodb://localhost:27017/guildbot`; `mongodb://localhost:27017/` being the URL and `guildbot` the database name.)
 
 **"MC_ACC_USERNAME"** - contains the email address of the minecraft account used for the guild chat bridge feature of the bot.
 
@@ -24,7 +34,7 @@ Variables that must be created in order for the bot to function:
 
 **"MC_ACC_AUTHSERVER"** - specifies the auth server that the bot should use when logging in to the minecraft account. If the account is not migrated (a mojang account), use "mojang". If the account is migrated (to a microsoft account), use "microsoft".
 
-## Additional confirugation - config.json file
+## Non-sensitive configuration
 
 The **config.json** file is used for saving less sesitive configuration data.
 
@@ -175,7 +185,7 @@ The **config.json** file is used for saving less sesitive configuration data.
 
 - **fancyLogs** enables colour-coded logs and inserts a prefix containing the time of the log to each message.
 
-- **djsDebugging** enables and logs debugging events in discord.js which may provide additional info if you are having trouble logging in as your bot.
+- **djsDebugging** enables and logs debugging events in discord.js which may provide additional info if you are having trouble logging in with your bot.
 
 **discordGuildId** is the ID of the discord server the bot operates in.
 
@@ -330,7 +340,7 @@ For more complex configuration check the module's [repository on npmjs.com](http
 
 - **minimumCount** defines the minimum amount of stars a message needs before being sent to the starboard.
 
-## MongoDB
+# **MongoDB**
 
 This project requires an installation of MongoDB to function.
 
