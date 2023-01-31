@@ -1,6 +1,6 @@
 {
   "name": "guildbot",
-  "version": "2.10.1",
+  "version": "2.11.0",
   "description": "Discord bot for hypixel guilds. Offers automatic applications with in-game requirements, displaying guild and player statistics, a guild chat to discord two-way bridge and more.",
   "author": "emmaexe",
   "main": "server.js",
