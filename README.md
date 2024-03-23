@@ -1,3 +1,13 @@
+# ⚠️ This project is archived
+
+Guildbot is no longer being actively maintained
+
+I no longer have enough time to play hypixel and have lost interest in this project. I might come back to it at some point in the future but for now it will no longer recieve any support/updates.
+
+<br><br>
+
+---
+
 <h1 align="center">Guildbot - a bot for minecraft hypixel guilds</h1>
 <p>
   <img src="https://img.shields.io/badge/node-18.x-blue.svg" />
@@ -5,7 +15,7 @@
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
   <a href="https://github.com/emmaexe/guildbot/graphs/commit-activity" target="_blank">
-    <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
+    <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-no-red.svg" />
   </a>
   <a href="https://github.com/emmaexe/guildbot/blob/main/LICENSE" target="_blank">
     <img alt="License: GPL--3.0" src="https://img.shields.io/github/license/emmaexe/guildbot" />
@@ -78,8 +88,8 @@ docker compose up -d
 
 👤 **Emmaexe**
 
-* Github: [@emmaexe](https://github.com/emmaexe)
-* Discord: [@emmaexe#0859](https://discord.gg/v4YrAgBRvz)
+* Github: [@emmaexe](https://ln.emmaexe.moe/github)
+* Discord: [@emmaexe](https://ln.emmaexe.moe/discord-server)
 
 ## 🤝 Contributing
 
